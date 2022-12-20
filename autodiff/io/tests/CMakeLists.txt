@@ -1,7 +1,6 @@
 set(_tests
     expression_test
-    infix_test
-    postfix_test
+    container_types_test
     token_test
     state_test)
 

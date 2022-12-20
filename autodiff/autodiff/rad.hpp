@@ -3,7 +3,6 @@
 #include <cmath>
 
 #include "io/expression.hpp"
-#include "io/postfix.hpp"
 #include "io/state.hpp"
 
 namespace autodiff {
