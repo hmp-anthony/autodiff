@@ -7,19 +7,8 @@ TEST(to_postfix, postfix) {
     auto pf1 = autodiff::to_postfix("A*B+C/D");
     ASSERT_EQ(pf1.to_string(), exp_str1);
 
-    std::cout << "---- DEBUG" << std::endl;
+    std::string exp_str2("AA+A+");
     auto pf2 = autodiff::to_postfix("A+A+A");
-    auto pf2_tokens = pf2.move_tokens();
-
-    auto A = pf2_tokens.front();
-    int count = 0;
-    for (const auto& t : pf2_tokens) {
-        if (t == A) {
-            ++count;
-        }
-
-        std::cout << t << std::endl;
-    }
-    std::cout << count << std::endl;
+    ASSERT_EQ(pf2.to_string(), exp_str2);
 }
 
