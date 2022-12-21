@@ -33,6 +33,13 @@ infix to_infix(std::string s) {
     if (s.size() > 0) {
         ifx.add_token(std::make_shared<token>(s));
     }
+
+    std::cout << "DEBUG ------------------------------" << std::endl;
+    auto tks = ifx.copy_tokens();
+    for (const auto& t : tks) {
+        std::cout << t->to_string() << "  " << int(t->type()) << std::endl;
+    }
+
     return ifx;
 }
 

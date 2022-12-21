@@ -87,6 +87,8 @@ public:
         return std::move(tks_);
     }
 
+    std::list<std::shared_ptr<token>> copy_tokens() { return tks_; }
+
     std::string to_string() const {
         std::string ts;
         for (const auto& t : tks_) {

@@ -10,5 +10,5 @@ int main() {
     auto g = rad::expression("x");
     auto h = rad::expression("sin(x) + ln(x)");
     auto i = rad::expression("sin(x*ln(x))");
-    state s = {{"x", 1}, {"y", 1}, {"z", 1}};
+    auto j = rad::expression("x*(y+z+w)");
 }
