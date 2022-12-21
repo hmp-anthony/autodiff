@@ -15,8 +15,7 @@ TEST(to_postfix, string) {
 TEST(to_infix, postfix) { 
     // get postfix
     auto pf1 = autodiff::to_postfix("A*B+C/D");
-    std::cout << "A*B+C/D" << std::endl;
-    // to_infix
+    // to_infix from postfix
     auto if1 = autodiff::to_infix(std::move(pf1));
-    std::cout << "DEBug " << std::endl;
+    ASSERT_EQ(if1.to_string(),"A*B+C/D");
 }

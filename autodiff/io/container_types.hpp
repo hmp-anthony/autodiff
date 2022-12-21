@@ -35,25 +35,24 @@ infix to_infix(std::string s) {
 }
 
 infix to_infix(postfix&& pfx) {
-    std::stack<std::shared_ptr<token>> s;
+    std::stack<std::string> s;
     auto ts = pfx.move_tokens();
-    infix ifx;
     for (const auto& t : ts) {
-        // Check type. If symbol is operand push it on the stack
         auto tp = t->type();
+        // Check type. If symbol is operand push it on the stack
         if (tp == token::token_type::variable ||
             tp == token::token_type::constant) {
-            //" ..............."
-            std::cout << t->to_string() << std::endl;
-            //" ..............."
-            s.push(t);
+            s.push(t->to_string());
         } else {
-            //ifx.add_token(s.top());
-            //s.pop();
-            //ifx.add_token(s.top());
-            //s.pop();
+            auto s1 = s.top();
+            s.pop();
+            auto s2 = s.top();
+            s.pop();
+            auto str = s2 + t->to_string() + s1;
+            s.push(str);
         }
     }
+    auto ifx = to_infix(std::move(s.top()));
     return ifx;
 }
 
