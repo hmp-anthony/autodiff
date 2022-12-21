@@ -23,9 +23,11 @@ infix to_infix(std::string s) {
     size_t pos = 0;
     std::string t;
     s.erase(std::remove(s.begin(), s.end(), ' '), s.end());
-    while ((pos = s.find_first_of("+-/*()")) != std::string::npos) {
-        ifx.add_token(std::make_shared<token>(s.substr(0, pos)));
-        ifx.add_token(std::make_shared<token>(s[pos]));
+    while ((pos = s.find_first_of(autodiff::ops)) != std::string::npos) {
+        auto str1 = s.substr(0, pos);
+        auto str2 = s[pos];
+        ifx.add_token(std::make_shared<token>(str1));
+        ifx.add_token(std::make_shared<token>(str2));
         s.erase(0, pos + 1);
     }
     if (s.size() > 0) {
@@ -61,6 +63,7 @@ postfix to_postfix(infix&& ifx) {
     std::stack<std::shared_ptr<token>> s;
     auto ts = ifx.move_tokens();
     postfix pfx;
+
     for (const auto& t : ts) {
         // If t is a number or a variable, push
         // to the string.
@@ -86,7 +89,7 @@ postfix to_postfix(infix&& ifx) {
             continue;
         }
 
-        // if it an operator
+        // if it is an operator
         while (!s.empty() && (s.top())->priority() >= t->priority()) {
             pfx.add_token(s.top());
             s.pop();

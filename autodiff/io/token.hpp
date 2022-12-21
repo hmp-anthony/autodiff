@@ -14,10 +14,16 @@ namespace autodiff {
 const std::string ops("(^-+*/)");
 const std::map<std::string, int> priority_map = {{"(", -1}, {"^", 0}, {"-", 1},
                                                  {"+", 1},  {"*", 2}, {"/", 2}};
+const std::vector<std::string> unary_operators = {"exp", "sin", "ln"};
 
 class token {
 public:
-    enum class token_type { variable, constant, binary_operation };
+    enum class token_type {
+        variable,
+        constant,
+        binary_operation,
+        unary_operation
+    };
     enum class op_priority { bracket, other, division_multiplcation };
 
     token(std::string s) : s_(std::move(s)), t_(set_type()) {}
@@ -46,6 +52,10 @@ private:
     token_type set_type() {
         if (s_.find_first_of(ops) != std::string::npos) {
             return token_type::binary_operation;
+        }
+        auto p = std::find(unary_operators.begin(), unary_operators.end(), s_);
+        if (p != unary_operators.end()) {
+            return token_type::unary_operation;
         }
         if (std::find_if(s_.begin(), s_.end(), [](unsigned char c) {
                 return std::isalpha(c);
