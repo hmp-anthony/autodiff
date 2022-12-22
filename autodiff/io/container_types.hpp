@@ -67,7 +67,7 @@ postfix to_postfix(infix&& ifx) {
     for (const auto& t : ts) {
         // If t is a number or a variable, push
         // to the string.
-        if (t->type() != token::token_type::binary_operation) {
+        if (t->is_constant() || t->is_variable()) {
             pfx.add_token(t);
             continue;
         }

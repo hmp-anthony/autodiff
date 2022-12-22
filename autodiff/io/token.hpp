@@ -57,13 +57,12 @@ public:
         return false;
     }
     bool is_constant() {
-        if (std::find_if(s_.begin(), s_.end(), [](unsigned char c) {
-                return std::isalpha(c);
-            }) == s_.end()) {
-            return true;
-        }
-        return false;
+        return !s_.empty() &&
+               std::find_if(s_.begin(), s_.end(), [](unsigned char c) {
+                   return !std::isdigit(c);
+               }) == s_.end();
     }
+
     bool is_variable() { return t_ == token_type::variable ? true : false; }
 
 private:
