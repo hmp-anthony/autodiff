@@ -5,10 +5,8 @@ using namespace autodiff;
 using point = std::array<double, 3>;
 
 int main() {
-    auto e = rad::expression("x*x*y*z + z*z");
-    auto f = rad::expression("exp(x) + y");
-    auto g = rad::expression("x");
-    auto h = rad::expression("sin(x) + ln(x)");
-    auto i = rad::expression("sin(x*ln(x))");
-    auto j = rad::expression("x*(y+z+w)");
+    auto exp1 = rad::expression("exp(x) + y");
+    auto exp2 = rad::expression("sin(x) + ln(x)");
+    auto exp3 = rad::expression("sin(x*ln(x))");
+    auto exp4 = rad::expression("1/(1+exp(-x))");
 }

@@ -14,16 +14,11 @@ namespace autodiff {
 const std::string ops("(^-+*/)");
 const std::map<std::string, int> priority_map = {{"(", -1}, {"^", 0}, {"-", 1},
                                                  {"+", 1},  {"*", 2}, {"/", 2}};
-const std::vector<std::string> unary_operators = {"exp", "sin", "ln"};
+const std::vector<std::string> functions = {"exp", "sin", "ln"};
 
 class token {
 public:
-    enum class token_type {
-        variable,
-        constant,
-        binary_operation,
-        unary_operation
-    };
+    enum class token_type { variable, constant, binary_operation, function };
     enum class op_priority { bracket, other, division_multiplcation };
 
     token(std::string s) : s_(std::move(s)), t_(set_type()) {}
@@ -48,18 +43,38 @@ public:
         return priority_map.at(s_);
     }
 
-private:
-    token_type set_type() {
+    bool is_binary_operation() {
         if (s_.find_first_of(ops) != std::string::npos) {
-            return token_type::binary_operation;
+            return true;
         }
-        auto p = std::find(unary_operators.begin(), unary_operators.end(), s_);
-        if (p != unary_operators.end()) {
-            return token_type::unary_operation;
+        return false;
+    }
+    bool is_function() {
+        auto p = std::find(functions.begin(), functions.end(), s_);
+        if (p != functions.end()) {
+            return true;
         }
+        return false;
+    }
+    bool is_constant() {
         if (std::find_if(s_.begin(), s_.end(), [](unsigned char c) {
                 return std::isalpha(c);
             }) == s_.end()) {
+            return true;
+        }
+        return false;
+    }
+    bool is_variable() { return t_ == token_type::variable ? true : false; }
+
+private:
+    token_type set_type() {
+        if (is_binary_operation()) {
+            return token_type::binary_operation;
+        }
+        if (is_function()) {
+            return token_type::function;
+        }
+        if (is_constant()) {
             return token_type::constant;
         }
         return token_type::variable;

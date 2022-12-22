@@ -33,13 +33,6 @@ infix to_infix(std::string s) {
     if (s.size() > 0) {
         ifx.add_token(std::make_shared<token>(s));
     }
-
-    std::cout << "DEBUG ------------------------------" << std::endl;
-    auto tks = ifx.copy_tokens();
-    for (const auto& t : tks) {
-        std::cout << t->to_string() << "  " << int(t->type()) << std::endl;
-    }
-
     return ifx;
 }
 
@@ -70,7 +63,7 @@ postfix to_postfix(infix&& ifx) {
     std::stack<std::shared_ptr<token>> s;
     auto ts = ifx.move_tokens();
     postfix pfx;
-
+    std::cout << "postfix" << std::endl;
     for (const auto& t : ts) {
         // If t is a number or a variable, push
         // to the string.
