@@ -62,12 +62,10 @@ public:
                    return !std::isdigit(c);
                }) == s_.end();
     }
-
+    bool is_open_paren() { return s_ == "("; }
+    bool is_closed_paren() { return s_ == ")"; }
     bool is_variable() { return t_ == token_type::variable ? true : false; }
-    
-    bool is_comma() {
-        return s_ == ",";
-    }
+    bool is_comma() { return s_ == ","; }
 
 private:
     token_type set_type() {

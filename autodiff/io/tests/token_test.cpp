@@ -34,5 +34,13 @@ TEST(token, basic) {
     ASSERT_EQ(t3.is_constant(), false);
     ASSERT_EQ(t3.is_binary_operation(), false);
     ASSERT_EQ(t3.is_function(), true);
+
+    token t4 = "(";
+    ASSERT_TRUE(t4.is_open_paren());
+    ASSERT_FALSE(t4.is_closed_paren());
+
+    token t5 = ")";
+    ASSERT_FALSE(t5.is_open_paren());
+    ASSERT_TRUE(t5.is_closed_paren());
 }
 
