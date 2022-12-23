@@ -64,6 +64,10 @@ public:
     }
 
     bool is_variable() { return t_ == token_type::variable ? true : false; }
+    
+    bool is_comma() {
+        return s_ == ",";
+    }
 
 private:
     token_type set_type() {

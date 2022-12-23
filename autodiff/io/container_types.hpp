@@ -58,52 +58,120 @@ infix to_infix(postfix&& pfx) {
     return ifx;
 }
 
-//! convert infix to postfix
+// --------------------------------------- THIS IS DIRTY.
+
+int priority(std::string s) {
+    if (s == "^") return 15;
+    if (s == "*") return 14;
+    if (s == "/") return 13;
+    if (s == "+") return 12;
+    if (s == "-") return 11;
+    if (s == ">" || s == "<" || s == ">=" || s == "<=") return 10;
+    if (s == "==" || s == "!=") return 9;
+    if (s == "&&") return 8;
+    if (s == "||") return 7;
+    if (s == ",") return 1;
+    // function
+    return 20;
+}
+
+// This is really dirty as we have two sources of priority.
+// One within the class def for token and one here.
+
+bool has_higher_priority(std::shared_ptr<token>& t1,
+                         std::shared_ptr<token>& t2) {
+    int t1_p = priority(t1->to_string());
+    int t2_p = priority(t2->to_string());
+    return t1_p >= t2_p;
+}
+
+bool has_equal_priority(std::shared_ptr<token>& t1,
+                        std::shared_ptr<token>& t2) {
+    int t1_p = priority(t1->to_string());
+    int t2_p = priority(t2->to_string());
+    return t1_p == t2_p;
+}
+
+bool is_left_associative(std::shared_ptr<token>& t) {
+    return !("^" == t->to_string());
+}
+
+// ---------------------------------------- END
+
 postfix to_postfix(infix&& ifx) {
     std::stack<std::shared_ptr<token>> s;
     auto ts = ifx.move_tokens();
     postfix pfx;
-    std::cout << "postfix" << std::endl;
+
     for (const auto& t : ts) {
-        // If t is a number or a variable, push
-        // to the string.
         if (t->is_constant() || t->is_variable()) {
             pfx.add_token(t);
             continue;
         }
-
-        // push to stack if left paraen.
+        if (t->is_function()) {
+            s.push(t);
+        }
         if (*t == ops_map.at('(')) {
             s.push(t);
             continue;
         }
-
-        // if we encounter a right paraen.
         if (*t == ops_map.at(')')) {
-            // pop off until we get to a left paraen.
-            while (*s.top() != ops_map.at('(')) {
-                pfx.add_token(s.top());
+            auto c = s.top();
+            s.pop();
+            while (*c != ops_map.at('(')) {
+                if (!c->is_comma()) {
+                    pfx.add_token(s.top());
+                    s.pop();
+                }
+                c = s.top();
                 s.pop();
             }
-            s.pop();
             continue;
         }
 
-        // if it is an operator
-        while (!s.empty() && (s.top())->priority() >= t->priority()) {
-            pfx.add_token(s.top());
-            s.pop();
+        if (t->is_binary_operation()) {
+            if (!s.empty()) {
+                auto c = s.top();
+                while (
+                    (!c->is_binary_operation() ||
+                     (c->is_binary_operation() && has_higher_priority(c, t)) ||
+                     (hasEqualPriority(cur, token) &&
+                      isLeftAssociative(token))) &&
+                    !(*c == ops_map.at(')'))) {
+                    if (!c->is_comma()) {
+                        pfx.add_token(c);
+                    }
+                    s.pop();
+                    if (!s.empty()) {
+                        c = s.top();
+                    }
+                }
+            }
+            s.push(t);
+            continue;
         }
-        s.push(t);
+        if (t->is_comma()) {
+            auto c = s.top();
+            while (!(*c == ops_map.at(')') || c->is_comma())) {
+                pfx.add_token(c);
+                s.pop();
+                if (!s.empty()) {
+                    c = s.top();
+                }
+            }
+            s.push(t);
+        }
     }
-
     while (!s.empty()) {
-        pfx.add_token(s.top());
+        auto pop = stack.top();
         s.pop();
+        if (pop->is_comma()) {
+            pfx.add_token(pop);
+        }
     }
-
     return pfx;
 }
 
 postfix to_postfix(const std::string& s) { return to_postfix(to_infix(s)); }
+
 }  // namespace autodiff
