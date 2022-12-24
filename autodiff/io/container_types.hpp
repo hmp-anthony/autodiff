@@ -138,30 +138,17 @@ postfix to_postfix(infix&& ifx) {
         if (t->is_binary_operation()) {
             if (!s.empty()) {
                 auto c = s.top();
-                std::cout << "before bool" << std::endl;
-                std::cout << c->to_string() << " " << t->to_string()
-                          << std::endl;
-                bool is_bin_op = c->is_binary_operation();
-                bool has_high_p = has_higher_priority(c, t);
-                bool has_equal_p = has_equal_priority(c, t);
-                bool is_left = is_left_associative(t);
-                std::cout << is_bin_op << has_high_p << has_equal_p << is_left
-                          << std::endl;
 
-                // separate the argument to while to look for bugs
-        
-
-                while ((!is_bin_op || (is_bin_op && has_high_p) ||
-                        (has_equal_p && is_left)) &&
-                       !c->is_open_paren()) {
+                while (
+                    (!c->is_binary_operation() ||
+                     (c->is_binary_operation() && has_higher_priority(c, t)) ||
+                     (has_equal_priority(c, t) && is_left_associative(t))) &&
+                    !c->is_open_paren()) {
                     if (!c->is_comma()) {
                         pfx.add_token(c);
                     }
-                    std::cout << "before pop  " << s.top()->to_string()
-                              << std::endl;
                     s.pop();
-                    std::cout << "after pop  " << s.top()->to_string()
-                              << std::endl;
+
                     if (!s.empty()) {
                         c = s.top();
                     }
@@ -170,7 +157,6 @@ postfix to_postfix(infix&& ifx) {
             s.push(t);
             continue;
         }
-        /*
         if (t->is_comma()) {
             auto c = s.top();
             while (!(c->is_open_paren() || c->is_comma())) {
@@ -181,9 +167,8 @@ postfix to_postfix(infix&& ifx) {
                 }
             }
             s.push(t);
-        }*/
+        }
     }
-    /*
     while (!s.empty()) {
         auto pop = s.top();
         s.pop();
@@ -191,7 +176,6 @@ postfix to_postfix(infix&& ifx) {
             pfx.add_token(pop);
         }
     }
-    */
     std::cout << pfx.to_string() << std::endl;
     return pfx;
 }

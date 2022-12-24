@@ -42,5 +42,8 @@ TEST(token, basic) {
     token t5 = ")";
     ASSERT_FALSE(t5.is_open_paren());
     ASSERT_TRUE(t5.is_closed_paren());
+
+    token t6 = ",";
+    ASSERT_TRUE(t6.is_comma());
 }
 
