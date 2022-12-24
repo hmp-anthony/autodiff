@@ -112,7 +112,10 @@ public:
         }
         return ts;
     }
-
+    
+    void reset() {
+        tks_.clear();
+    }
 private:
     std::list<std::shared_ptr<token>> tks_;
 };
