@@ -14,10 +14,11 @@ namespace autodiff {
 const std::string ops("(^-+*/)");
 const std::map<std::string, int> priority_map = {{"(", -1}, {"^", 0}, {"-", 1},
                                                  {"+", 1},  {"*", 2}, {"/", 2}};
+const std::vector<std::string> functions = {"exp", "sin", "ln"};
 
 class token {
 public:
-    enum class token_type { variable, constant, binary_operation };
+    enum class token_type { variable, constant, binary_operation, function };
     enum class op_priority { bracket, other, division_multiplcation };
 
     token(std::string s) : s_(std::move(s)), t_(set_type()) {}
@@ -42,14 +43,39 @@ public:
         return priority_map.at(s_);
     }
 
+    bool is_binary_operation() {
+        if (s_.find_first_of(ops) != std::string::npos) {
+            return true;
+        }
+        return false;
+    }
+    bool is_function() {
+        auto p = std::find(functions.begin(), functions.end(), s_);
+        if (p != functions.end()) {
+            return true;
+        }
+        return false;
+    }
+    bool is_constant() {
+        return !s_.empty() &&
+               std::find_if(s_.begin(), s_.end(), [](unsigned char c) {
+                   return !std::isdigit(c);
+               }) == s_.end();
+    }
+    bool is_open_paren() { return s_ == "("; }
+    bool is_closed_paren() { return s_ == ")"; }
+    bool is_variable() { return t_ == token_type::variable ? true : false; }
+    bool is_comma() { return s_ == ","; }
+
 private:
     token_type set_type() {
-        if (s_.find_first_of(ops) != std::string::npos) {
+        if (is_binary_operation()) {
             return token_type::binary_operation;
         }
-        if (std::find_if(s_.begin(), s_.end(), [](unsigned char c) {
-                return std::isalpha(c);
-            }) == s_.end()) {
+        if (is_function()) {
+            return token_type::function;
+        }
+        if (is_constant()) {
             return token_type::constant;
         }
         return token_type::variable;
@@ -77,6 +103,8 @@ public:
         return std::move(tks_);
     }
 
+    std::list<std::shared_ptr<token>> copy_tokens() { return tks_; }
+
     std::string to_string() const {
         std::string ts;
         for (const auto& t : tks_) {
@@ -84,7 +112,10 @@ public:
         }
         return ts;
     }
-
+    
+    void reset() {
+        tks_.clear();
+    }
 private:
     std::list<std::shared_ptr<token>> tks_;
 };

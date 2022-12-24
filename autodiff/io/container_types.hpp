@@ -62,22 +62,17 @@ postfix to_postfix(infix&& ifx) {
     auto ts = ifx.move_tokens();
     postfix pfx;
     for (const auto& t : ts) {
-        // If t is a number or a variable, push
-        // to the string.
-        if (t->type() != token::token_type::binary_operation) {
+        if (t->is_constant() || t->is_variable()) {
             pfx.add_token(t);
             continue;
         }
 
-        // push to stack if left paraen.
-        if (*t == ops_map.at('(')) {
+        if (t->is_open_paren()) {
             s.push(t);
             continue;
         }
 
-        // if we encounter a right paraen.
-        if (*t == ops_map.at(')')) {
-            // pop off until we get to a left paraen.
+        if (t->is_closed_paren()) {
             while (*s.top() != ops_map.at('(')) {
                 pfx.add_token(s.top());
                 s.pop();
@@ -86,7 +81,6 @@ postfix to_postfix(infix&& ifx) {
             continue;
         }
 
-        // if it an operator
         while (!s.empty() && (s.top())->priority() >= t->priority()) {
             pfx.add_token(s.top());
             s.pop();
@@ -98,7 +92,7 @@ postfix to_postfix(infix&& ifx) {
         pfx.add_token(s.top());
         s.pop();
     }
-
+    std::cout << pfx.to_string() << std::endl;
     return pfx;
 }
 

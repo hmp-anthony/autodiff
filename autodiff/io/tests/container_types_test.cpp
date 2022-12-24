@@ -10,6 +10,11 @@ TEST(to_postfix, string) {
     std::string exp_str2("AA+A+");
     auto pf2 = autodiff::to_postfix("A+A+A");
     ASSERT_EQ(pf2.to_string(), exp_str2);
+
+    std::string exp_str3("a*(b+c+d)");
+    std::string exp_str3_postfix("abc+d+*");
+    auto pf3 = autodiff::to_postfix(exp_str3);
+    ASSERT_EQ(pf3.to_string(), exp_str3_postfix);
 }
 
 TEST(to_infix, postfix) { 

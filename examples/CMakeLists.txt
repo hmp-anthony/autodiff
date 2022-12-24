@@ -1,6 +1,6 @@
 include_directories(../.)
 
 
-add_executable(gd gd.cpp)
+add_executable(gradients gradients.cpp)
 
 
