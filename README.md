@@ -1,8 +1,6 @@
 # autodiff 
 
-This is definitely a work in progress.  
-
-See examples folder for how you can use `autodiff`. :)
+This is definitely a work in progress.
 
 To build :
 `make`
