@@ -56,10 +56,16 @@ infix to_infix(postfix&& pfx) {
     return ifx;
 }
 
+void function_pass(std::list<std::shared_ptr<token>>& ts) {
+    for (const auto& t : ts) {
+    }
+}
+
 //! convert infix to postfix
 postfix to_postfix(infix&& ifx) {
     std::stack<std::shared_ptr<token>> s;
     auto ts = ifx.move_tokens();
+    function_pass(ts);
     postfix pfx;
     for (const auto& t : ts) {
         if (t->is_constant() || t->is_variable()) {

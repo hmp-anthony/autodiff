@@ -170,6 +170,7 @@ public:
                 s.push(n);
                 continue;
             }
+
             auto op1 = s.top();
             s.pop();
             auto op2 = s.top();

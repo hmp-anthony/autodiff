@@ -17,10 +17,10 @@ TEST(to_postfix, string) {
     ASSERT_EQ(pf3.to_string(), exp_str3_postfix);
 }
 
-TEST(to_infix, postfix) { 
+TEST(to_infix, postfix) {
     // get postfix
     auto pf1 = autodiff::to_postfix("A*B+C/D");
     // to_infix from postfix
     auto if1 = autodiff::to_infix(std::move(pf1));
-    ASSERT_EQ(if1.to_string(),"A*B+C/D");
+    ASSERT_EQ(if1.to_string(), "A*B+C/D");
 }
