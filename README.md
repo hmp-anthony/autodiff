@@ -1,6 +1,6 @@
 # autodiff 
 
-`autodiff` specialises in parsing arithmetic expressions and calculating derivatives via automatic differentiation.
+This is definitely a work in progress.  
 
 See examples folder for how you can use `autodiff`. :)
 
@@ -9,6 +9,3 @@ To build :
 
 To test :
 `make test`
-
-See my blog post on this [here](https://downandoutinswansea.blogspot.com/2020/05/the-magic-behind-deep-learning.html)
-
