@@ -37,6 +37,9 @@ public:
     token_type type() const { return t_; }
 
     int priority() const {
+        if (t_ == token_type::function) {
+            return 40;
+        }
         if (t_ != token_type::binary_operation) {
             return ops.size();
         }
@@ -112,10 +115,9 @@ public:
         }
         return ts;
     }
-    
-    void reset() {
-        tks_.clear();
-    }
+
+    void reset() { tks_.clear(); }
+
 private:
     std::list<std::shared_ptr<token>> tks_;
 };

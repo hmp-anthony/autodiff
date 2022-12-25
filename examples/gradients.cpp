@@ -5,10 +5,11 @@ using namespace autodiff;
 using point = std::array<double, 3>;
 
 int main() {
-    auto exp0 = rad::expression("x*x*x");
-    auto exp1 = rad::expression("exp(x) + y");
-    auto exp5 = rad::expression("exp(x + y)");
-    auto exp2 = rad::expression("sin(x) + ln(x)");
-    auto exp3 = rad::expression("sin(x*ln(x))");
-    auto exp4 = rad::expression("1/(1+exp(-x))");
+    auto exp = rad::expression("x*x*x");
+    exp = rad::expression("exp(x) + y");
+    exp = rad::expression("exp(x + y)");
+    exp = rad::expression("sin(x+y)*z");
+    exp = rad::expression("sin(x+y)");
+    exp = rad::expression("sin(x) + y");
+    exp = rad::expression("1/(1+exp(-x))");
 }
