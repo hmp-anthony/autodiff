@@ -4,7 +4,7 @@
 #include "io/expression.hpp"
 
 using namespace autodiff;
-
+/*
 TEST(rad, basic) {
     auto e = rad::expression("2*A+B");
     state s = {{"A", 2}, {"B", 1}};
@@ -49,4 +49,4 @@ TEST(rad, grad_3d) {
     state s = {{"x", 1}, {"y", 1}, {"z", 1}};
     state g = {{"x", 2}, {"y", 2}, {"z", 2}};
     ASSERT_EQ(e.grad(s), g);
-}
+}*/
