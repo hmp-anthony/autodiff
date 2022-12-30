@@ -3,7 +3,6 @@
 #include <cmath>
 
 #include "io/expression.hpp"
-#include "io/state.hpp"
 
 namespace autodiff {
 
@@ -79,10 +78,10 @@ public:
 //! functionality
 class expression : public autodiff::base::expression<node> {
 public:
-    expression(postfix&& pfx)
-        : autodiff::base::expression<node>(std::move(pfx)){};
-    expression(std::string s)
-        : autodiff::base::expression<node>(std::move(to_postfix(s))){};
+    //    expression(postfix&& pfx)
+    //      : autodiff::base::expression<node>(std::move(pfx)){};
+    //expression(std::string s)
+    //    : autodiff::base::expression<node>(std::move(to_postfix(s))){};
     auto grad(const state& s) {
         // set root gradient to 1. df/df = 1
         head_->grad_ = 1;

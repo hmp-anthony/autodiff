@@ -1,18 +1,19 @@
 #pragma once
 
-#include "io/container_types.hpp"
-#include "io/state.hpp"
-#include "io/token.hpp"
-
 #include <array>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
-#include <set>
 #include <optional>
+#include <set>
+#include <stack>
 #include <vector>
 
+#include "io/token.hpp"
+
 namespace autodiff {
+
+using state = std::map<std::string, double>;
 
 template <typename T>
 class unique_stack {
@@ -107,13 +108,13 @@ public:
         if (t_.type() == token::token_type::binary_operation) {
             if (t_.to_string() == "+") return right_->eval(s) + left_->eval(s);
             if (t_.to_string() == "-") return right_->eval(s) - left_->eval(s);
-			if (t_.to_string() == "/") {
-				double z;
-				if ((z = left_->eval(s)) == 0.0) {
-					throw std::invalid_argument("dividing by zero!");
-				}
-				return right_->eval(s) / left_->eval(s);
-			};
+            if (t_.to_string() == "/") {
+                double z;
+                if ((z = left_->eval(s)) == 0.0) {
+                    throw std::invalid_argument("dividing by zero!");
+                }
+                return right_->eval(s) / left_->eval(s);
+            };
             if (t_.to_string() == "*") return right_->eval(s) * left_->eval(s);
             return 0;
         }
@@ -142,22 +143,23 @@ public:
 
     token::token_type type() { return t_.type(); }
     const std::string& to_string() { return t_.to_string(); }
-    
-private:
 
+private:
     token t_;
     std::shared_ptr<node> left_;
     std::shared_ptr<node> right_;
     std::vector<std::shared_ptr<node>> parents_;
     std::optional<double> v_;
-
 };
+
+struct postfix {};
 
 template <typename NODE>
 class expression {
 public:
     expression(postfix&& pfx) {
-        auto pfx_tokens = pfx.move_tokens();
+
+        /*    auto pfx_tokens = pfx.move_tokens();
         std::list<std::shared_ptr<NODE>> nodes;
         // move the tokens into nodes
         for (const auto& t : pfx_tokens) {
@@ -193,15 +195,14 @@ public:
         // pop the top off, which corresponds to the head of the graph.
         head_ = std::move(s.top());
         // graph generated and unique variables obtained. Job done.
+        // */
     }
 
-	//! Evaluates the expression. Note that we do not utilise the 
-	//! cached evaluation functionality present in the node class.
-	//! This is quite simply because it provides no real advantage
-	//! if we are just evaluating an expression.
-    double operator[](const state& s) {
-		return head_->eval(s);
-	}
+    //! Evaluates the expression. Note that we do not utilise the
+    //! cached evaluation functionality present in the node class.
+    //! This is quite simply because it provides no real advantage
+    //! if we are just evaluating an expression.
+    double operator[](const state& s) { return head_->eval(s); }
     void print() {
         std::cout << head_ << std::endl;
         head_->print();
