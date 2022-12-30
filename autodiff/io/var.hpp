@@ -6,47 +6,16 @@
 #include <memory>
 #include <optional>
 #include <set>
-#include <stack>
-#include <vector>
 
 #include "io/token.hpp"
+#include "io/unique_stack.hpp"
 #include "io/var.hpp"
 
 namespace autodiff {
 
 using state = std::map<std::string, double>;
 
-template <typename T>
-class unique_stack {
-public:
-    struct cmp {
-        bool operator()(const std::shared_ptr<T>& a,
-                        const std::shared_ptr<T>& b) const {
-            return *a < *b;
-        }
-    };
-
-    void push(const std::shared_ptr<T>& n) {
-        auto it = uniques_.insert(n);
-        if (!it.second) {
-            // i.e the var already exists;
-            s_.push(*it.first);
-            return;
-        }
-        s_.push(n);
-    }
-
-    void pop() { s_.pop(); }
-    std::shared_ptr<T>& top() { return s_.top(); }
-    std::set<std::shared_ptr<T>, cmp> unique_items() { return uniques_; }
-
-private:
-    std::set<std::shared_ptr<T>, cmp> uniques_;
-    std::stack<std::shared_ptr<T>> s_;
-};
-
 namespace base {
-//! Absorbs token to form a expression var
 class var {
 public:
     var(const var& v)
@@ -55,20 +24,20 @@ public:
           right_(v.right_),
           parents_(v.parents_),
           v_(v.v_){};
-    explicit var(var& v)
+    var(var& v)
         : t_(t_.to_string()),
           left_(v.left_),
           right_(v.right_),
           parents_(v.parents_),
           v_(v.v_){};
-    explicit var(std::string s) : t_(s){};
-    explicit var(token t) : t_(std::move(t)){};
-    explicit var(token t, token l, token r)
+    var(std::string s) : t_(s){};
+    var(token t) : t_(std::move(t)){};
+    var(token t, token l, token r)
         : t_(std::move(t)),
           left_(std::make_shared<var>(l)),
           right_(std::make_shared<var>(r)) {}
 
-    explicit var(var&& n)
+    var(var&& n)
         : t_(std::move(n.t_)),
           left_(std::move(n.left_)),
           right_(std::move(n.right_)) {}
