@@ -32,3 +32,18 @@ TEST(functions, exp) {
     ASSERT_NEAR(z_2.value(), 59874.1, 0.1);
 }
 
+TEST(basic, computation_graph) {
+    auto exp_ = autodiff::function::exp();
+
+    var y_1(10);
+    var y_2(1);
+
+    auto z = exp_(y_1 + y_2);
+
+    auto a = z.get_left();
+    ASSERT_TRUE(a->operation() == "+");
+    ASSERT_TRUE(a->get_left()->value() == 10);
+    ASSERT_TRUE(a->get_right()->value() == 1);
+
+}
+
