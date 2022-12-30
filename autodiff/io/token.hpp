@@ -52,6 +52,7 @@ public:
         }
         return false;
     }
+
     bool is_function() {
         auto p = std::find(functions.begin(), functions.end(), s_);
         if (p != functions.end()) {

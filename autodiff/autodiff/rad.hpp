@@ -2,22 +2,22 @@
 
 #include <cmath>
 
-#include "io/expression.hpp"
+#include "io/var.hpp"
 
 namespace autodiff {
 
 namespace rad {
-class node : public autodiff::base::node {
+class var : public autodiff::base::var {
 public:
-    explicit node(token t)
-        : autodiff::base::node(t), grad_(0), visit_count_(0) {}
+    explicit var(token t)
+        : autodiff::base::var(t), grad_(0), visit_count_(0) {}
 
     void reset() {
         reset_value();
         grad_ = parents().empty() ? 1 : 0;
         visit_count_ = 0;
-        if (left()) std::static_pointer_cast<node>(left())->reset();
-        if (right()) std::static_pointer_cast<node>(right())->reset();
+        if (left()) std::static_pointer_cast<var>(left())->reset();
+        if (right()) std::static_pointer_cast<var>(right())->reset();
     }
 
     void grad(const state& s) {
@@ -39,8 +39,8 @@ public:
             } else if (str == "-") {
                 subtraction(s);
             }
-            std::static_pointer_cast<node>(left())->grad(s);
-            std::static_pointer_cast<node>(right())->grad(s);
+            std::static_pointer_cast<var>(left())->grad(s);
+            std::static_pointer_cast<var>(right())->grad(s);
             return;
         }
         // if(type() == unary_operation) ...
@@ -48,25 +48,25 @@ public:
     }
 
     void multiplication(const state& s) {
-        std::static_pointer_cast<node>(left())->grad_ += grad_ * (*right())[s];
-        std::static_pointer_cast<node>(right())->grad_ += grad_ * (*left())[s];
+        std::static_pointer_cast<var>(left())->grad_ += grad_ * (*right())[s];
+        std::static_pointer_cast<var>(right())->grad_ += grad_ * (*left())[s];
     }
 
     void addition(const state& s) {
-        std::static_pointer_cast<node>(left())->grad_ += grad_;
-        std::static_pointer_cast<node>(right())->grad_ += grad_;
+        std::static_pointer_cast<var>(left())->grad_ += grad_;
+        std::static_pointer_cast<var>(right())->grad_ += grad_;
     }
 
     void division(const state& s) {
         double r = (*right())[s];
         double l = (*left())[s];
-        std::static_pointer_cast<node>(right())->grad_ += grad_ * (1.0 / l);
-        std::static_pointer_cast<node>(left())->grad_ -= grad_ * (r / (l * l));
+        std::static_pointer_cast<var>(right())->grad_ += grad_ * (1.0 / l);
+        std::static_pointer_cast<var>(left())->grad_ -= grad_ * (r / (l * l));
     }
 
     void subtraction(const state& s) {
-        std::static_pointer_cast<node>(left())->grad_ -= grad_;
-        std::static_pointer_cast<node>(right())->grad_ += grad_;
+        std::static_pointer_cast<var>(left())->grad_ -= grad_;
+        std::static_pointer_cast<var>(right())->grad_ += grad_;
     }
 
     double grad_;
@@ -74,14 +74,15 @@ public:
 };
 
 //! The idea here is that you generate a base expression
-//! given a type of node then inherit from it to extend
+//! given a type of var then inherit from it to extend
 //! functionality
-class expression : public autodiff::base::expression<node> {
+/*
+class expression : public autodiff::base::expression<var> {
 public:
     //    expression(postfix&& pfx)
-    //      : autodiff::base::expression<node>(std::move(pfx)){};
+    //      : autodiff::base::expression<var>(std::move(pfx)){};
     //expression(std::string s)
-    //    : autodiff::base::expression<node>(std::move(to_postfix(s))){};
+    //    : autodiff::base::expression<var>(std::move(to_postfix(s))){};
     auto grad(const state& s) {
         // set root gradient to 1. df/df = 1
         head_->grad_ = 1;
@@ -106,7 +107,7 @@ public:
         return grad;
     }
 };
-
+*/
 }  // namespace rad
 
 }  // namespace autodiff

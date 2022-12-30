@@ -1,5 +1,4 @@
 set(_tests
-    expression_test
     token_test
     var_test
     )
