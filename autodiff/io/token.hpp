@@ -92,34 +92,4 @@ const std::map<char, token> ops_map = {{'(', token('(')}, {'+', token('+')},
                                        {'-', token('-')}, {'*', token('*')},
                                        {')', token(')')}, {'/', token('/')}};
 
-template <typename T>
-class token_container {
-public:
-    token_container() = default;
-
-    void add_token(std::shared_ptr<token> t) {
-        if (t->to_string() == "") return;
-        tks_.push_back(t);
-    }
-
-    std::list<std::shared_ptr<token>>&& move_tokens() {
-        return std::move(tks_);
-    }
-
-    std::list<std::shared_ptr<token>> copy_tokens() { return tks_; }
-
-    std::string to_string() const {
-        std::string ts;
-        for (const auto& t : tks_) {
-            ts += t->to_string();
-        }
-        return ts;
-    }
-
-    void reset() { tks_.clear(); }
-
-private:
-    std::list<std::shared_ptr<token>> tks_;
-};
-
 }  // namespace autodiff

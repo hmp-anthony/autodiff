@@ -1,5 +1,6 @@
-#include "gtest/gtest.h"
 #include "io/var.hpp"
+
+#include "gtest/gtest.h"
 
 using autodiff::var;
 
@@ -11,10 +12,12 @@ TEST(basic, addition) {
     auto a_ = x_.get_left();
     auto b_ = x_.get_right();
 
-    std::cout << x_ << std::endl;
-    std::cout << *b_ << std::endl;
-    std::cout << *a_ << std::endl;
+    ASSERT_EQ(x_.value(), 11);
+    ASSERT_EQ(a_->value(), 1);
+    ASSERT_EQ(b_->value(), 10);
+}
 
+TEST(functions, exp) {
     // testing functions
     auto exp_ = autodiff::function::exp();
 
@@ -24,25 +27,8 @@ TEST(basic, addition) {
 
     auto z_1 = exp_(y_1 + y_2);
     auto z_2 = exp_(y_3);
-    // Obtains a pointer to var of which the value is 11
-    auto w_1 = z_1.get_left();
 
-    // attempt to get children of w;
-    auto k_1 = w_1->get_left();
-    auto l_1 = w_1->get_right();
-
-    std::cout << *w_1 << std::endl;
-    std::cout << *k_1 << std::endl;
-    std::cout << *l_1 << std::endl;
-
-    // Obtains a pointer to var of which the value is 11
-    auto w_2 = z_2.get_left();
-
-    // attempt to get children of w;
-    auto k_2 = w_2->get_left();
-    auto l_2 = w_2->get_right();
-
-    std::cout << *w_2 << std::endl;
-    std::cout << *k_2 << std::endl;
-    std::cout << *l_2 << std::endl;
+    ASSERT_NEAR(z_1.value(), 59874.1, 0.1);
+    ASSERT_NEAR(z_2.value(), 59874.1, 0.1);
 }
+

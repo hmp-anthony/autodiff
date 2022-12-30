@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "io/token.hpp"
+#include "io/var.hpp"
 
 namespace autodiff {
 
@@ -152,50 +153,12 @@ private:
     std::optional<double> v_;
 };
 
-struct postfix {};
-
 template <typename NODE>
 class expression {
 public:
-    expression(postfix&& pfx) {
-
-        /*    auto pfx_tokens = pfx.move_tokens();
-        std::list<std::shared_ptr<NODE>> nodes;
-        // move the tokens into nodes
-        for (const auto& t : pfx_tokens) {
-            nodes.push_back(std::make_shared<NODE>(std::move(*t)));
-        }
-        unique_stack<NODE> s;
-        for (auto& n : nodes) {
-            if (n->type() != token::token_type::binary_operation) {
-                // variable or constant
-                s.push(n);
-                continue;
-            }
-
-            auto op1 = s.top();
-            s.pop();
-            auto op2 = s.top();
-            s.pop();
-
-            op1->add_parent(n);
-            op2->add_parent(n);
-            n->set_left_child(op1);
-            n->set_right_child(op2);
-            s.push(n);
-        }
-        // Get unique nodes from the stack.
-        auto uis = s.unique_items();
-        // Add the variables (only) to a list.
-        for (auto n : uis) {
-            if (n->type() == token::token_type::variable) {
-                variables_.push_back(n);
-            }
-        }
-        // pop the top off, which corresponds to the head of the graph.
-        head_ = std::move(s.top());
-        // graph generated and unique variables obtained. Job done.
-        // */
+    expression(var v) {
+        // Here we convert the "var" computational graph
+        // to an expression which implements back_prop.
     }
 
     //! Evaluates the expression. Note that we do not utilise the
