@@ -45,7 +45,7 @@ public:
           v_(n.v_) {}
 
     friend var operator+(const var& l, const var& r) {
-        var result(token(std::string(("+"))));
+        var result(token(std::string("+")));
         result.v_ = l.v_.value() + r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
@@ -53,8 +53,7 @@ public:
     }
 
     friend var operator*(const var& l, const var& r) {
-        auto tk = token("*");
-        var result(tk);
+        var result(token(std::string("*")));
         result.v_ = l.v_.value() * r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
@@ -116,35 +115,8 @@ public:
 
     token get_token() { return t_; }
 
-    double operator[](const state& s) {
-        if (v_) {
-            return v_.value();
-        }
-        v_ = eval(s);
+    virtual double eval() {
         return v_.value();
-    }
-
-    virtual double eval(const state& s) {
-        if (t_.type() == token::token_type::binary_operation) {
-            if (t_.to_string() == "+") return right_->eval(s) + left_->eval(s);
-            if (t_.to_string() == "-") return right_->eval(s) - left_->eval(s);
-            if (t_.to_string() == "/") {
-                double z;
-                if ((z = left_->eval(s)) == 0.0) {
-                    throw std::invalid_argument("dividing by zero!");
-                }
-                return right_->eval(s) / left_->eval(s);
-            };
-            if (t_.to_string() == "*") return right_->eval(s) * left_->eval(s);
-            return 0;
-        }
-        if (t_.type() == token::token_type::variable) {
-            return s.at(t_.to_string());
-        }
-        if (t_.type() == token::token_type::constant) {
-            return std::stod(t_.to_string());
-        }
-        return 0;
     }
 
     void print() {

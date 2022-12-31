@@ -1,7 +1,13 @@
 #include "autodiff/autodiff/rad.hpp"
 
-using namespace autodiff;
+using autodiff::base::var;
 
 using point = std::array<double, 3>;
 
-int main() {}
+int main() {
+    var x(10);
+    var y(12);
+
+    auto z = x*x + y*y;
+    std::cout << z.eval() << std::endl;
+}

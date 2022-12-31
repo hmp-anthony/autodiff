@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "io/var.hpp"
-
+/*
 namespace autodiff {
 
 namespace rad {
@@ -73,4 +73,4 @@ public:
 };
 }  // namespace rad
 
-}  // namespace autodiff
+}*/  // namespace autodiff
