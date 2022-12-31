@@ -1,6 +1,7 @@
 set(_tests
-    rad_test)
-
+    token_test
+    var_test
+    )
 
 foreach(_test IN LISTS _tests)
   add_executable(${_test} ${_test}.cpp)

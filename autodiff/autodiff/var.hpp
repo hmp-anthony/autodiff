@@ -7,9 +7,9 @@
 #include <optional>
 #include <set>
 
-#include "io/token.hpp"
-#include "io/unique_stack.hpp"
-#include "io/var.hpp"
+#include "autodiff/token.hpp"
+#include "autodiff/unique_stack.hpp"
+#include "autodiff/var.hpp"
 
 namespace autodiff {
 
@@ -49,6 +49,9 @@ public:
         result.v_ = l.v_.value() + r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
+        auto result_ptr = std::make_shared<var>(result);
+        result.left_->add_parent(result_ptr);
+        result.right_->add_parent(result_ptr);
         return result;
     }
 
@@ -57,6 +60,9 @@ public:
         result.v_ = l.v_.value() * r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
+        auto result_ptr = std::make_shared<var>(result);
+        result.left_->add_parent(result_ptr);
+        result.right_->add_parent(result_ptr);
         return result;
     }
 
@@ -115,27 +121,44 @@ public:
 
     token get_token() { return t_; }
 
-    virtual double eval() {
-        return v_.value();
-    }
+    virtual double eval() { return v_.value(); }
 
     void print() {
-        std::cout << "------------" << std::endl;
-        std::cout << t_.to_string() << std::endl;
-        std::cout << "------------" << std::endl;
+        std::cout << "---" << std::endl;
         if (left_) {
-            std::cout << left_->value() << std::endl;
+            std::cout << left_->value() << " " << left_->parents_.size()
+                      << std::endl;
             left_->print();
         }
         std::cout << t_.to_string() << std::endl;
         if (right_) {
-            std::cout << right_->value() << std::endl;
+            std::cout << right_->value() << " " << right_->parents_.size()
+                      << std::endl;
             right_->print();
         }
     }
 
+    void populate() {
+        if (left_) {
+            items_.push_back(left_);
+            left_->populate();
+        }
+        items_.push_back(std::make_shared<var>(t_));
+        if (right_) {
+            items_.push_back(right_);
+            right_->populate();
+        }
+    }
+
+    void prepare() {
+        populate();
+        // now use unique stack to get variables.
+        
+    }
+
     token::token_type type() { return t_.type(); }
     const std::string& to_string() { return t_.to_string(); }
+        
 
 private:
     token t_;
@@ -143,6 +166,8 @@ private:
     std::shared_ptr<var> right_;
     std::vector<std::shared_ptr<var>> parents_;
     std::optional<double> v_;
+
+    std::list<std::shared_ptr<var>> items_;
 };
 
 }  // namespace base
