@@ -32,6 +32,12 @@ public:
     bool operator==(const token& t) const { return s_ == t.s_; }
     bool operator!=(const token& t) const { return s_ != t.s_; }
 
+    token operator=(const token& t) {
+        s_ = t.s_;
+        t_ = t.t_;
+        return *this;
+    }
+
     const std::string& to_string() const { return s_; }
 
     token_type type() const { return t_; }

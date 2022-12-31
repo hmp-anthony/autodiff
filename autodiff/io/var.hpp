@@ -19,32 +19,33 @@ namespace base {
 class var {
 public:
     var(const var& v)
-        : t_(t_.to_string()),
+        : t_(v.t_),
           left_(v.left_),
           right_(v.right_),
           parents_(v.parents_),
           v_(v.v_){};
     var(var& v)
-        : t_(t_.to_string()),
+        : t_(v.t_),
           left_(v.left_),
           right_(v.right_),
           parents_(v.parents_),
           v_(v.v_){};
     var(std::string s) : t_(s){};
+    var(double v) : t_(v) { v_ = v; }
     var(token t) : t_(std::move(t)){};
     var(token t, token l, token r)
-        : t_(std::move(t)),
+        : t_(t),
           left_(std::make_shared<var>(l)),
           right_(std::make_shared<var>(r)) {}
 
     var(var&& n)
         : t_(std::move(n.t_)),
           left_(std::move(n.left_)),
-          right_(std::move(n.right_)) {}
+          right_(std::move(n.right_)),
+          v_(n.v_) {}
 
     friend var operator+(const var& l, const var& r) {
-        auto tk = token("+");
-        var result(tk);
+        var result(token(std::string(("+"))));
         result.v_ = l.v_.value() + r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
@@ -77,6 +78,7 @@ public:
     }
 
     var operator=(const var& v) {
+        t_ = v.t_;
         v_ = v.v_;
         left_ = v.left_;
         right_ = v.right_;
@@ -93,15 +95,17 @@ public:
         return false;
     }
 
-    bool is_binary_operation() { return t_.is_binary_operation(); }
+    bool is_binary_operation() {
+        return t_.type() == token::token_type::binary_operation;
+    }
 
     void add_parent(const std::shared_ptr<var>& p) { parents_.push_back(p); }
 
     void set_left(std::shared_ptr<var> lc) { left_ = lc; }
     void set_right(std::shared_ptr<var> rc) { right_ = rc; }
 
-    std::shared_ptr<var> get_left() { return left_; }
-    std::shared_ptr<var> get_right() { return right_; }
+    std::shared_ptr<var>& get_left() { return left_; }
+    std::shared_ptr<var>& get_right() { return right_; }
 
     const std::vector<std::shared_ptr<var>>& parents() { return parents_; }
     std::shared_ptr<var>& left() { return left_; }
@@ -148,11 +152,12 @@ public:
         std::cout << t_.to_string() << std::endl;
         std::cout << "------------" << std::endl;
         if (left_) {
-            std::cout << left_ << std::endl;
+            std::cout << left_->value() << std::endl;
             left_->print();
         }
+        std::cout << t_.to_string() << std::endl;
         if (right_) {
-            std::cout << right_ << std::endl;
+            std::cout << right_->value() << std::endl;
             right_->print();
         }
     }
