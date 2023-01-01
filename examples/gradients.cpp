@@ -10,7 +10,5 @@ int main() {
     var y(12);
 
     auto z = x * x + y * y;
-    std::cout << z.eval() << std::endl;
-    z.print();
-
+    z.gradient();
 }

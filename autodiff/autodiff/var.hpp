@@ -138,6 +138,24 @@ public:
         }
     }
 
+    void gradient() {
+        populate();
+        prepare();
+    }
+
+    token::token_type type() { return t_.type(); }
+    const std::string& to_string() { return t_.to_string(); }
+
+private:
+    token t_;
+    std::shared_ptr<var> left_;
+    std::shared_ptr<var> right_;
+    std::vector<std::shared_ptr<var>> parents_;
+    std::optional<double> v_;
+
+    std::list<std::shared_ptr<var>> items_;
+    std::list<std::shared_ptr<var>> variables_;
+
     void populate() {
         if (left_) {
             items_.push_back(left_);
@@ -151,23 +169,19 @@ public:
     }
 
     void prepare() {
-        populate();
-        // now use unique stack to get variables.
-        
+        unique_stack<var> s;
+        for (const auto& i : items_) {
+            s.push(i);
+            std::cout << i->to_string() << std::endl;
+        }
+        auto uis = s.unique_items();
+        for (auto k : uis) {
+            if (k->type() == token::token_type::variable) {
+                variables_.push_back(k);
+                std::cout << 1 << std::endl;
+            }
+        }
     }
-
-    token::token_type type() { return t_.type(); }
-    const std::string& to_string() { return t_.to_string(); }
-        
-
-private:
-    token t_;
-    std::shared_ptr<var> left_;
-    std::shared_ptr<var> right_;
-    std::vector<std::shared_ptr<var>> parents_;
-    std::optional<double> v_;
-
-    std::list<std::shared_ptr<var>> items_;
 };
 
 }  // namespace base
