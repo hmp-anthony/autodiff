@@ -100,9 +100,8 @@ public:
         return false;
     }
 
-    bool is_binary_operation() {
-        return t_.type() == token::token_type::binary_operation;
-    }
+    bool is_binary_operation() { return t_.is_binary_operation(); }
+    bool is_variable() { return t_.is_variable(); }
 
     void add_parent(const std::shared_ptr<var>& p) { parents_.push_back(p); }
 
@@ -119,7 +118,7 @@ public:
     double value() { return v_.value(); }
     void reset_value() { v_.reset(); }
 
-    token get_token() { return t_; }
+    token& get_token() { return t_; }
 
     virtual double eval() { return v_.value(); }
 
@@ -143,7 +142,6 @@ public:
         prepare();
     }
 
-    token::token_type type() { return t_.type(); }
     const std::string& to_string() { return t_.to_string(); }
 
 private:
@@ -159,11 +157,14 @@ private:
     void populate() {
         if (left_) {
             items_.push_back(left_);
+            std::cout << "_left   " << left_->to_string() << std::endl;
+            std::cout << left_->is_variable() << std::endl;
             left_->populate();
         }
         items_.push_back(std::make_shared<var>(t_));
         if (right_) {
             items_.push_back(right_);
+            std::cout << "_righr   " << right_->to_string() << std::endl;
             right_->populate();
         }
     }
@@ -172,14 +173,13 @@ private:
         unique_stack<var> s;
         for (const auto& i : items_) {
             s.push(i);
-            std::cout << i->to_string() << std::endl;
         }
         auto uis = s.unique_items();
-        for (auto k : uis) {
-            if (k->type() == token::token_type::variable) {
+        for (auto& k : uis) {
+            if (k->is_variable()) {
                 variables_.push_back(k);
                 std::cout << 1 << std::endl;
-            }
+            }    
         }
     }
 };
