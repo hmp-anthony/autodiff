@@ -23,26 +23,27 @@ public:
           left_(v.left_),
           right_(v.right_),
           parents_(v.parents_),
-          v_(v.v_){};
+          v_(v.v_),
+          grad_(0),
+          visit_count_(0){};
     var(var& v)
         : t_(v.t_),
           left_(v.left_),
           right_(v.right_),
           parents_(v.parents_),
-          v_(v.v_){};
-    var(std::string s) : t_(s){};
-    var(double v) : t_(v) { v_ = v; }
-    var(token t) : t_(std::move(t)){};
-    var(token t, token l, token r)
-        : t_(t),
-          left_(std::make_shared<var>(l)),
-          right_(std::make_shared<var>(r)) {}
-
+          v_(v.v_),
+          grad_(0),
+          visit_count_(0){};
+    var(std::string s) : t_(s), grad_(0), visit_count_(0) {}
+    var(double v) : t_(v), grad_(0), visit_count_(0) { v_ = v; }
+    var(token t) : t_(std::move(t)), grad_(0), visit_count_(0){};
     var(var&& n)
         : t_(std::move(n.t_)),
           left_(std::move(n.left_)),
           right_(std::move(n.right_)),
-          v_(n.v_) {}
+          v_(n.v_),
+          grad_(0),
+          visit_count_(0) {}
 
     friend var operator+(const var& l, const var& r) {
         var result(token(std::string("+")));
@@ -137,10 +138,41 @@ public:
         }
     }
 
-    void gradient() {
-        populate();
-        prepare();
+    void grad() {
+        // Do not propagate untill all parents have
+        // touched their child. I do not advocate this.
+        if (++visit_count_ < parents().size() && !parents().empty()) {
+            return;
+        }
+
+        // carry out grad
+        if (is_binary_operation()) {
+            std::string str = to_string();
+            addition();
+            /*
+            if (str == "*") {
+                multiplication(s);
+            } else if (str == "+") {
+                addition(s);
+            } else if (str == "/") {
+                division(s);
+            } else if (str == "-") {
+                subtraction(s);
+            }*/
+            left_->grad();
+            right_->grad();
+            return;
+        }
+        std::cout << grad_ << std::endl;
     }
+
+    void addition() {
+        left_->grad_ += grad_;
+        right_->grad_ += grad_;
+    }
+
+    double grad_;
+    int visit_count_;
 
     const std::string& to_string() { return t_.to_string(); }
 
@@ -150,38 +182,6 @@ private:
     std::shared_ptr<var> right_;
     std::vector<std::shared_ptr<var>> parents_;
     std::optional<double> v_;
-
-    std::list<std::shared_ptr<var>> items_;
-    std::list<std::shared_ptr<var>> variables_;
-
-    void populate() {
-        if (left_) {
-            items_.push_back(left_);
-            std::cout << "_left   " << left_->to_string() << std::endl;
-            std::cout << left_->is_variable() << std::endl;
-            left_->populate();
-        }
-        items_.push_back(std::make_shared<var>(t_));
-        if (right_) {
-            items_.push_back(right_);
-            std::cout << "_righr   " << right_->to_string() << std::endl;
-            right_->populate();
-        }
-    }
-
-    void prepare() {
-        unique_stack<var> s;
-        for (const auto& i : items_) {
-            s.push(i);
-        }
-        auto uis = s.unique_items();
-        for (auto& k : uis) {
-            if (k->is_variable()) {
-                variables_.push_back(k);
-                std::cout << 1 << std::endl;
-            }    
-        }
-    }
 };
 
 }  // namespace base

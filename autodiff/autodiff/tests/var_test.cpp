@@ -78,7 +78,4 @@ TEST(basic, computation_graph_2) {
     auto zrr = zr->get_right();
     std::cout << zrl->to_string() << std::endl;
     std::cout << zrr->to_string() << std::endl;
-
-    std::cout << "diff" << std::endl;
-    z.gradient();
 }

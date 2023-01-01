@@ -9,6 +9,6 @@ int main() {
     var x(10);
     var y(12);
 
-    auto z = x * x + y * y;
-    z.gradient();
+    auto z = x + y;
+    z.grad();
 }
