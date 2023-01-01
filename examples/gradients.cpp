@@ -9,7 +9,7 @@ int main() {
     var x(10);
     var y(12);
 
-    auto z = x * x + y * y;
+    auto z = x * x * x + y * y * y;
     auto Z = expression(z);
     Z.grad();
 }

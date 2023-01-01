@@ -13,8 +13,6 @@
 
 namespace autodiff {
 
-using state = std::map<std::string, double>;
-
 namespace base {
 class var {
 public:
@@ -48,8 +46,13 @@ public:
     friend var operator+(const var& l, const var& r) {
         var result(token(std::string("+")));
         result.v_ = l.v_.value() + r.v_.value();
+
         result.left_ = std::make_shared<var>(l);
+        items_.push_back(result.left_);
+
         result.right_ = std::make_shared<var>(r);
+        items_.push_back(result.right_);
+
         auto result_ptr = std::make_shared<var>(result);
         result.left_->add_parent(result_ptr);
         result.right_->add_parent(result_ptr);
@@ -148,7 +151,6 @@ public:
         // carry out grad
         if (is_binary_operation()) {
             std::string str = to_string();
-            addition();
             if (str == "*") {
                 multiplication();
             } else if (str == "+") {
@@ -164,7 +166,6 @@ public:
             right_->grad();
             return;
         }
-        std::cout << grad_ << std::endl;
     }
 
     void addition() {
@@ -182,6 +183,8 @@ public:
 
     const std::string& to_string() { return t_.to_string(); }
 
+    static std::vector<std::shared_ptr<var>> items_;
+
 private:
     token t_;
     std::shared_ptr<var> left_;
@@ -192,7 +195,12 @@ private:
 
 class expression {
 public:
-    expression(var v) { head_ = std::make_shared<var>(v); }
+    expression(var v) {
+        head_ = std::make_shared<var>(v);
+        for (const auto& i : var::items_) {
+            std::cout << i->to_string() << std::endl;
+        }
+    }
     auto grad() {
         head_->grad_ = 1;
         head_->grad();
