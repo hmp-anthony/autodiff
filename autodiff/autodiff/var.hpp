@@ -149,16 +149,17 @@ public:
         if (is_binary_operation()) {
             std::string str = to_string();
             addition();
-            /*
             if (str == "*") {
-                multiplication(s);
+                multiplication();
             } else if (str == "+") {
-                addition(s);
+                addition();
+                /*
             } else if (str == "/") {
                 division(s);
             } else if (str == "-") {
                 subtraction(s);
-            }*/
+                */
+            }
             left_->grad();
             right_->grad();
             return;
@@ -169,6 +170,11 @@ public:
     void addition() {
         left_->grad_ += grad_;
         right_->grad_ += grad_;
+    }
+
+    void multiplication() {
+        left_->grad_ += grad_ * right_->v_.value();
+        right_->grad_ += grad_ * left_->v_.value();
     }
 
     double grad_;
@@ -182,6 +188,19 @@ private:
     std::shared_ptr<var> right_;
     std::vector<std::shared_ptr<var>> parents_;
     std::optional<double> v_;
+};
+
+class expression {
+public:
+    expression(var v) { head_ = std::make_shared<var>(v); }
+    auto grad() {
+        head_->grad_ = 1;
+        head_->grad();
+    }
+
+private:
+    std::shared_ptr<var> head_;
+    std::list<std::shared_ptr<var>> variables_;
 };
 
 }  // namespace base
