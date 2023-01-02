@@ -6,8 +6,8 @@ using autodiff::base::var;
 using point = std::array<double, 3>;
 
 int main() {
-    var x(10);
-    var y(12);
+    var x(10, 'x');
+    var y(12, 'y');
 
     auto z = x * x * x + y * y * y;
     auto Z = expression(z);

@@ -12,31 +12,38 @@
 #include "autodiff/var.hpp"
 
 namespace autodiff {
-
 namespace base {
 class var {
 public:
-    var(const var& v)
+    var(const var& v, char name = ' ')
         : t_(v.t_),
+          name_(name),
           left_(v.left_),
           right_(v.right_),
           parents_(v.parents_),
           v_(v.v_),
           grad_(0),
           visit_count_(0){};
-    var(var& v)
+    var(var& v, char name = ' ')
         : t_(v.t_),
+          name_(name),
           left_(v.left_),
           right_(v.right_),
           parents_(v.parents_),
           v_(v.v_),
           grad_(0),
           visit_count_(0){};
-    var(std::string s) : t_(s), grad_(0), visit_count_(0) {}
-    var(double v) : t_(v), grad_(0), visit_count_(0) { v_ = v; }
-    var(token t) : t_(std::move(t)), grad_(0), visit_count_(0){};
-    var(var&& n)
+    var(std::string s, char name = ' ')
+        : t_(s), name_(name), grad_(0), visit_count_(0) {}
+    var(double v, char name = ' ')
+        : t_(v), name_(name), grad_(0), visit_count_(0) {
+        v_ = v;
+    }
+    var(token t, char name = ' ')
+        : t_(std::move(t)), name_(name), grad_(0), visit_count_(0){};
+    var(var&& n, char name = ' ')
         : t_(std::move(n.t_)),
+          name_(name),
           left_(std::move(n.left_)),
           right_(std::move(n.right_)),
           v_(n.v_),
@@ -48,10 +55,8 @@ public:
         result.v_ = l.v_.value() + r.v_.value();
 
         result.left_ = std::make_shared<var>(l);
-        items_.push_back(result.left_);
 
         result.right_ = std::make_shared<var>(r);
-        items_.push_back(result.right_);
 
         auto result_ptr = std::make_shared<var>(result);
         result.left_->add_parent(result_ptr);
@@ -111,9 +116,6 @@ public:
 
     void set_left(std::shared_ptr<var> lc) { left_ = lc; }
     void set_right(std::shared_ptr<var> rc) { right_ = rc; }
-
-    std::shared_ptr<var>& get_left() { return left_; }
-    std::shared_ptr<var>& get_right() { return right_; }
 
     const std::vector<std::shared_ptr<var>>& parents() { return parents_; }
     std::shared_ptr<var>& left() { return left_; }
@@ -183,23 +185,32 @@ public:
 
     const std::string& to_string() { return t_.to_string(); }
 
-    static std::vector<std::shared_ptr<var>> items_;
-
 private:
     token t_;
+    char name_;
     std::shared_ptr<var> left_;
     std::shared_ptr<var> right_;
     std::vector<std::shared_ptr<var>> parents_;
     std::optional<double> v_;
 };
 
+void leaves(std::shared_ptr<var> root) {
+    if (!root) return;
+    if (!root->left() && !root->right()) {
+        std::cout << root->to_string() << " ";
+        return;
+    }
+
+    if (root->left()) leaves(root->left());
+
+    if (root->right()) leaves(root->right());
+}
+
 class expression {
 public:
     expression(var v) {
         head_ = std::make_shared<var>(v);
-        for (const auto& i : var::items_) {
-            std::cout << i->to_string() << std::endl;
-        }
+        leaves(head_);
     }
     auto grad() {
         head_->grad_ = 1;
