@@ -6,9 +6,9 @@
 #include <memory>
 #include <optional>
 #include <set>
+#include <utility>
 
 #include "autodiff/token.hpp"
-#include "autodiff/unique_stack.hpp"
 #include "autodiff/var.hpp"
 
 namespace autodiff {
@@ -121,6 +121,8 @@ public:
     std::shared_ptr<var>& left() { return left_; }
     std::shared_ptr<var>& right() { return right_; }
 
+    char name() { return name_; }
+
     double value() { return v_.value(); }
     void reset_value() { v_.reset(); }
 
@@ -194,23 +196,30 @@ private:
     std::optional<double> v_;
 };
 
-void leaves(std::shared_ptr<var> root) {
-    if (!root) return;
-    if (!root->left() && !root->right()) {
-        std::cout << root->to_string() << " ";
-        return;
-    }
-
-    if (root->left()) leaves(root->left());
-
-    if (root->right()) leaves(root->right());
-}
-
 class expression {
 public:
     expression(var v) {
         head_ = std::make_shared<var>(v);
-        leaves(head_);
+        populate_variables(head_);
+
+        std::vector<std::pair<char, std::shared_ptr<var>>> unique;
+        for (const auto& v : variables_) {
+            std::cout << v->to_string() << std::endl;
+
+            auto it = std::find_if(
+                unique.begin(), unique.end(),
+                [&v](const std::pair<char, std::shared_ptr<var>>& e) {
+                    return e.first == v->name();
+                });
+
+            if (it == std::end(unique)) {
+                auto p = std::make_pair(v->name(), v);
+                unique.push_back(p);
+            }
+            else {
+                (*it).second->add_parent(v->parents()[0]);
+            }
+        }
     }
     auto grad() {
         head_->grad_ = 1;
@@ -218,6 +227,17 @@ public:
     }
 
 private:
+    void populate_variables(std::shared_ptr<var> root) {
+        if (!root) return;
+        if (!root->left() && !root->right()) {
+            variables_.push_back(root);
+            return;
+        }
+
+        if (root->left()) populate_variables(root->left());
+
+        if (root->right()) populate_variables(root->right());
+    }
     std::shared_ptr<var> head_;
     std::list<std::shared_ptr<var>> variables_;
 };
