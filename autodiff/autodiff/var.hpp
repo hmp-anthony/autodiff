@@ -24,24 +24,15 @@ public:
           v_(v.v_),
           grad_(0),
           visit_count_(0){};
-    var(var& v, char name = ' ')
-        : t_(v.t_),
-          name_(name),
-          left_(v.left_),
-          right_(v.right_),
-          parents_(v.parents_),
-          v_(v.v_),
-          grad_(0),
-          visit_count_(0){};
-    var(std::string s, char name = ' ')
+    explicit var(std::string s, char name = ' ')
         : t_(s), name_(name), grad_(0), visit_count_(0) {}
-    var(double v, char name = ' ')
+    explicit var(double v, char name = ' ')
         : t_(v), name_(name), grad_(0), visit_count_(0) {
         v_ = v;
     }
-    var(token t, char name = ' ')
+    explicit var(token t, char name = ' ')
         : t_(std::move(t)), name_(name), grad_(0), visit_count_(0){};
-    var(var&& n, char name = ' ')
+    explicit var(var&& n, char name = ' ')
         : t_(std::move(n.t_)),
           name_(name),
           left_(std::move(n.left_)),
@@ -75,38 +66,14 @@ public:
         return result;
     }
 
-    bool operator<(const var& n) const {
-        if (left_ == nullptr && n.left_ == nullptr && right_ == nullptr &&
-            n.right_ == nullptr) {
-            // i.e if this var and the other are NOT
-            // operations. More specifically they are
-            // variable or constant vars.
-            return t_.to_string() < n.t_.to_string();
-        }
-        return (t_.to_string() < n.t_.to_string() ||
-                (t_.to_string() == n.t_.to_string() &&
-                 left_->t_.to_string() < n.left_->t_.to_string()) ||
-                (t_.to_string() == n.t_.to_string() &&
-                 left_->t_.to_string() == n.left_->t_.to_string() &&
-                 right_->t_.to_string() < n.right_->t_.to_string()));
-    }
-
     var operator=(const var& v) {
         t_ = v.t_;
+        name_ = v.name_;
         v_ = v.v_;
         left_ = v.left_;
         right_ = v.right_;
         parents_ = v.parents_;
         return *this;
-    }
-
-    //! Checks that vars have the same data.
-    //! This does not mean they are the SAME var.
-    bool operator==(const var& n) {
-        if (t_ == n.t_ && left_->t_ == n.left_->t_ &&
-            right_->t_ == n.right_->t_)
-            return true;
-        return false;
     }
 
     bool is_binary_operation() { return t_.is_binary_operation(); }
@@ -122,7 +89,6 @@ public:
     std::shared_ptr<var>& right() { return right_; }
 
     char name() { return name_; }
-
     double value() { return v_.value(); }
     void reset_value() { v_.reset(); }
 
@@ -215,10 +181,13 @@ public:
             if (it == std::end(unique)) {
                 auto p = std::make_pair(v->name(), v);
                 unique.push_back(p);
-            }
-            else {
+            } else {
                 (*it).second->add_parent(v->parents()[0]);
             }
+        }
+
+        for (const auto& u : unique) {
+            std::cout << u.first << std::endl;
         }
     }
     auto grad() {
@@ -227,9 +196,10 @@ public:
     }
 
 private:
-    void populate_variables(std::shared_ptr<var> root) {
+    void populate_variables(const std::shared_ptr<var>& root) {
         if (!root) return;
         if (!root->left() && !root->right()) {
+            std::cout << root->name() << std::endl;
             variables_.push_back(root);
             return;
         }
