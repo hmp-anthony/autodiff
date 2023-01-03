@@ -15,7 +15,14 @@ namespace autodiff {
 namespace base {
 class var {
 public:
-    var(const var& v) = default;
+    var(const var& v)
+        : t_(v.t_),
+          name_(v.name_),
+          left_(std::move(v.left_)),
+          right_(std::move(v.right_)),
+          v_(v.v_),
+          grad_(0),
+          visit_count_(0) {}
     explicit var(std::string s, char name = ' ')
         : t_(s), name_(name), grad_(0), visit_count_(0) {}
     explicit var(double v, char name = ' ')
@@ -44,9 +51,31 @@ public:
         return result;
     }
 
+    friend var operator-(const var& l, const var& r) {
+        var result(token(std::string("+")));
+        result.v_ = l.v_.value() - r.v_.value();
+        result.left_ = std::make_shared<var>(l);
+        result.right_ = std::make_shared<var>(r);
+        auto result_ptr = std::make_shared<var>(result);
+        result.left_->add_parent(result_ptr);
+        result.right_->add_parent(result_ptr);
+        return result;
+    }
+
     friend var operator*(const var& l, const var& r) {
         var result(token(std::string("*")));
         result.v_ = l.v_.value() * r.v_.value();
+        result.left_ = std::make_shared<var>(l);
+        result.right_ = std::make_shared<var>(r);
+        auto result_ptr = std::make_shared<var>(result);
+        result.left_->add_parent(result_ptr);
+        result.right_->add_parent(result_ptr);
+        return result;
+    }
+
+    friend var operator/(const var& l, const var& r) {
+        var result(token(std::string("/")));
+        result.v_ = l.v_.value() / r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
         auto result_ptr = std::make_shared<var>(result);
@@ -67,6 +96,7 @@ public:
 
     bool is_binary_operation() { return t_.is_binary_operation(); }
     bool is_variable() { return t_.is_variable(); }
+    bool is_constant() { return t_.is_constant(); }
 
     void add_parent(const std::shared_ptr<var>& p) { parents_.push_back(p); }
 
@@ -83,9 +113,12 @@ public:
 
     token& get_token() { return t_; }
 
-    virtual double eval() { return v_.value(); }
+    double eval() { return v_.value(); }
 
     void grad() {
+        if (++visit_count_ < parents().size() && !parents().empty()) {
+            return;
+        }
         // carry out grad
         if (is_binary_operation()) {
             std::string str = to_string();
@@ -93,12 +126,10 @@ public:
                 multiplication();
             } else if (str == "+") {
                 addition();
-                /*
             } else if (str == "/") {
-                division(s);
+                division();
             } else if (str == "-") {
-                subtraction(s);
-                */
+                subtraction();
             }
             left()->grad();
             right()->grad();
@@ -112,8 +143,20 @@ public:
     }
 
     void multiplication() {
-        left_->grad_ += grad_ * right_->v_.value();
-        right_->grad_ += grad_ * left_->v_.value();
+        left_->grad_ += grad_ * right_->eval();
+        right_->grad_ += grad_ * left_->eval();
+    }
+
+    void division() {
+        double r = right()->eval();
+        double l = left()->eval();
+        (right())->grad_ += grad_ * (1.0 / l);
+        (left())->grad_ -= grad_ * (r / (l * l));
+    }
+
+    void subtraction() {
+        (left())->grad_ -= grad_;
+        (right())->grad_ += grad_;
     }
 
     double grad_;
