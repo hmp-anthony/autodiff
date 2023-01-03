@@ -36,11 +36,8 @@ public:
     friend var operator+(const var& l, const var& r) {
         var result(token(std::string("+")));
         result.v_ = l.v_.value() + r.v_.value();
-
         result.left_ = std::make_shared<var>(l);
-
         result.right_ = std::make_shared<var>(r);
-
         auto result_ptr = std::make_shared<var>(result);
         result.left_->add_parent(result_ptr);
         result.right_->add_parent(result_ptr);
@@ -88,28 +85,7 @@ public:
 
     virtual double eval() { return v_.value(); }
 
-    void print() {
-        std::cout << "---" << std::endl;
-        if (left_) {
-            std::cout << left_->value() << " " << left_->parents_.size()
-                      << std::endl;
-            left_->print();
-        }
-        std::cout << t_.to_string() << std::endl;
-        if (right_) {
-            std::cout << right_->value() << " " << right_->parents_.size()
-                      << std::endl;
-            right_->print();
-        }
-    }
-
     void grad() {
-        // Do not propagate untill all parents have
-        // touched their child. I do not advocate this.
-        if (++visit_count_ < parents().size() && !parents().empty()) {
-            return;
-        }
-
         // carry out grad
         if (is_binary_operation()) {
             std::string str = to_string();
@@ -124,8 +100,8 @@ public:
                 subtraction(s);
                 */
             }
-            left_->grad();
-            right_->grad();
+            left()->grad();
+            right()->grad();
             return;
         }
     }
@@ -177,6 +153,7 @@ public:
                 (*it).second->add_parent(v->parents()[0]);
                 v->parents()[0]->left() = nullptr;
                 v->parents()[0]->right() = nullptr;
+                v->parents().clear();
             }
         }
         variables_.clear();
@@ -196,6 +173,8 @@ public:
         }
     }
 
+    std::list<std::shared_ptr<var>> variables() { return variables_; }
+
 private:
     void populate_variables(const std::shared_ptr<var>& root) {
         if (!root) return;
@@ -206,6 +185,7 @@ private:
         if (root->left()) populate_variables(root->left());
         if (root->right()) populate_variables(root->right());
     }
+
     std::shared_ptr<var> head_;
     std::list<std::shared_ptr<var>> variables_;
 };
