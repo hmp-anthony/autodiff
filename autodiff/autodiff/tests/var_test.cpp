@@ -11,7 +11,6 @@
 
 using namespace autodiff;
 using namespace base;
-/*
 TEST(basic, addition) {
     var a(1);
     var b(10);
@@ -78,4 +77,4 @@ TEST(basic, computation_graph_2) {
     auto zrr = zr->right();
     std::cout << zrl->to_string() << std::endl;
     std::cout << zrr->to_string() << std::endl;
-}*/
+}

@@ -8,10 +8,10 @@ using point = std::array<double, 3>;
 int main() {
     var x(10, 'x');
     var y(12, 'y');
-    
-    std::cout << x.name() << std::endl;
+    var z(3, 'z');
 
-    auto z = x * x * x + y * y * y;
-    auto Z = expression(z);
-    Z.grad();
+    auto w = x * x * x;
+    auto W = expression(w);
+    W.grad();
+    W.print_grad();
 }

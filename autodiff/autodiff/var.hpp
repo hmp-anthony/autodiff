@@ -15,15 +15,7 @@ namespace autodiff {
 namespace base {
 class var {
 public:
-    var(const var& v, char name = ' ')
-        : t_(v.t_),
-          name_(name),
-          left_(v.left_),
-          right_(v.right_),
-          parents_(v.parents_),
-          v_(v.v_),
-          grad_(0),
-          visit_count_(0){};
+    var(const var& v) = default;
     explicit var(std::string s, char name = ' ')
         : t_(s), name_(name), grad_(0), visit_count_(0) {}
     explicit var(double v, char name = ' ')
@@ -84,7 +76,7 @@ public:
     void set_left(std::shared_ptr<var> lc) { left_ = lc; }
     void set_right(std::shared_ptr<var> rc) { right_ = rc; }
 
-    const std::vector<std::shared_ptr<var>>& parents() { return parents_; }
+    std::vector<std::shared_ptr<var>>& parents() { return parents_; }
     std::shared_ptr<var>& left() { return left_; }
     std::shared_ptr<var>& right() { return right_; }
 
@@ -170,8 +162,6 @@ public:
 
         std::vector<std::pair<char, std::shared_ptr<var>>> unique;
         for (const auto& v : variables_) {
-            std::cout << v->to_string() << std::endl;
-
             auto it = std::find_if(
                 unique.begin(), unique.end(),
                 [&v](const std::pair<char, std::shared_ptr<var>>& e) {
@@ -179,33 +169,41 @@ public:
                 });
 
             if (it == std::end(unique)) {
+                // if not found, add it
                 auto p = std::make_pair(v->name(), v);
                 unique.push_back(p);
             } else {
+                // if found
                 (*it).second->add_parent(v->parents()[0]);
+                v->parents()[0]->left() = nullptr;
+                v->parents()[0]->right() = nullptr;
             }
         }
-
+        variables_.clear();
         for (const auto& u : unique) {
-            std::cout << u.first << std::endl;
+            variables_.push_back(u.second);
         }
     }
+
     auto grad() {
         head_->grad_ = 1;
         head_->grad();
+    }
+
+    void print_grad() {
+        for (const auto& v : variables_) {
+            std::cout << v->grad_ << std::endl;
+        }
     }
 
 private:
     void populate_variables(const std::shared_ptr<var>& root) {
         if (!root) return;
         if (!root->left() && !root->right()) {
-            std::cout << root->name() << std::endl;
             variables_.push_back(root);
             return;
         }
-
         if (root->left()) populate_variables(root->left());
-
         if (root->right()) populate_variables(root->right());
     }
     std::shared_ptr<var> head_;
