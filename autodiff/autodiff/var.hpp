@@ -176,43 +176,23 @@ private:
 class expression {
 public:
     expression(var v) {
+        // set head
         head_ = std::make_shared<var>(v);
+        // populate variables
         populate_variables(head_);
-
-        std::vector<std::pair<char, std::shared_ptr<var>>> unique;
-        for (const auto& v : variables_) {
-            auto it = std::find_if(
-                unique.begin(), unique.end(),
-                [&v](const std::pair<char, std::shared_ptr<var>>& e) {
-                    return e.first == v->name();
-                });
-
-            if (it == std::end(unique)) {
-                // if not found, add it
-                auto p = std::make_pair(v->name(), v);
-                unique.push_back(p);
-            } else {
-                // if found
-                (*it).second->add_parent(v->parents()[0]);
-                v->parents()[0]->left() = nullptr;
-                v->parents()[0]->right() = nullptr;
-                v->parents().clear();
-            }
-        }
-        variables_.clear();
-        for (const auto& u : unique) {
-            variables_.push_back(u.second);
-        }
     }
-
     auto grad() {
         head_->grad_ = 1;
         head_->grad();
+        // collect contributions
+        for (const auto& v : variables_) {
+            gradients_[v->name()] += v->grad_;
+        }
     }
 
     void print_grad() {
-        for (const auto& v : variables_) {
-            std::cout << v->grad_ << std::endl;
+        for (const auto& v : gradients_) {
+            std::cout << v.first << " " << v.second << std::endl;
         }
     }
 
@@ -231,6 +211,7 @@ private:
 
     std::shared_ptr<var> head_;
     std::list<std::shared_ptr<var>> variables_;
+    std::map<char, double> gradients_;
 };
 
 }  // namespace base
