@@ -46,8 +46,6 @@ public:
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
         auto result_ptr = std::make_shared<var>(result);
-        result.left_->add_parent(result_ptr);
-        result.right_->add_parent(result_ptr);
         return result;
     }
 
@@ -57,8 +55,6 @@ public:
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
         auto result_ptr = std::make_shared<var>(result);
-        result.left_->add_parent(result_ptr);
-        result.right_->add_parent(result_ptr);
         return result;
     }
 
@@ -68,8 +64,6 @@ public:
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
         auto result_ptr = std::make_shared<var>(result);
-        result.left_->add_parent(result_ptr);
-        result.right_->add_parent(result_ptr);
         return result;
     }
 
@@ -79,8 +73,6 @@ public:
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
         auto result_ptr = std::make_shared<var>(result);
-        result.left_->add_parent(result_ptr);
-        result.right_->add_parent(result_ptr);
         return result;
     }
 
@@ -90,7 +82,6 @@ public:
         v_ = v.v_;
         left_ = v.left_;
         right_ = v.right_;
-        parents_ = v.parents_;
         return *this;
     }
 
@@ -98,12 +89,9 @@ public:
     bool is_variable() { return t_.is_variable(); }
     bool is_constant() { return t_.is_constant(); }
 
-    void add_parent(const std::shared_ptr<var>& p) { parents_.push_back(p); }
-
     void set_left(std::shared_ptr<var> lc) { left_ = lc; }
     void set_right(std::shared_ptr<var> rc) { right_ = rc; }
 
-    std::vector<std::shared_ptr<var>>& parents() { return parents_; }
     std::shared_ptr<var>& left() { return left_; }
     std::shared_ptr<var>& right() { return right_; }
 
@@ -116,10 +104,6 @@ public:
     double eval() { return v_.value(); }
 
     void grad() {
-        if (++visit_count_ < parents().size() && !parents().empty()) {
-            return;
-        }
-        // carry out grad
         if (is_binary_operation()) {
             std::string str = to_string();
             if (str == "*") {
@@ -150,8 +134,8 @@ public:
     void division() {
         double r = right()->eval();
         double l = left()->eval();
-        (right())->grad_ += grad_ * (1.0 / l);
-        (left())->grad_ -= grad_ * (r / (l * l));
+        (left())->grad_ += grad_ * (1.0 / r);
+        (right())->grad_ -= grad_ * (l / (r * r));
     }
 
     void subtraction() {
@@ -169,49 +153,7 @@ private:
     char name_;
     std::shared_ptr<var> left_;
     std::shared_ptr<var> right_;
-    std::vector<std::shared_ptr<var>> parents_;
     std::optional<double> v_;
-};
-
-class expression {
-public:
-    expression(var v) {
-        // set head
-        head_ = std::make_shared<var>(v);
-        // populate variables
-        populate_variables(head_);
-    }
-    auto grad() {
-        head_->grad_ = 1;
-        head_->grad();
-        // collect contributions
-        for (const auto& v : variables_) {
-            gradients_[v->name()] += v->grad_;
-        }
-    }
-
-    void print_grad() {
-        for (const auto& v : gradients_) {
-            std::cout << v.first << " " << v.second << std::endl;
-        }
-    }
-
-    std::list<std::shared_ptr<var>> variables() { return variables_; }
-
-private:
-    void populate_variables(const std::shared_ptr<var>& root) {
-        if (!root) return;
-        if (!root->left() && !root->right()) {
-            variables_.push_back(root);
-            return;
-        }
-        if (root->left()) populate_variables(root->left());
-        if (root->right()) populate_variables(root->right());
-    }
-
-    std::shared_ptr<var> head_;
-    std::list<std::shared_ptr<var>> variables_;
-    std::map<char, double> gradients_;
 };
 
 }  // namespace base

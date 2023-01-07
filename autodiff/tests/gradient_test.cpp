@@ -1,10 +1,11 @@
+#include "gradient.hpp"
+
 #include <cstdlib>
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <typeinfo>
 
-#include "var.hpp"
 #include "gtest/gtest.h"
 
 using namespace autodiff;
@@ -15,21 +16,15 @@ TEST(basic, addition) {
     var b(10, 'b');
 
     auto x = a * a * a * a + b;
-    auto X = expression(x);
-    X.grad();
-    X.print_grad();
+    auto X = gradient(x);
+    ASSERT_EQ(X['a'], 4000);
+    ASSERT_EQ(X['b'], 1);
 
     var c(1, 'c');
     var d(10, 'd');
-    
+
     auto y = c / d;
-    auto Y = expression(y);
-    Y.grad();
-    Y.print_grad();
-
-
-    auto vars = X.variables();
-    for (const auto& v : vars) {
-        std::cout << v->name() << v->parents().size() << std::endl;
-    }
+    auto Y = gradient(y);
+    ASSERT_EQ(Y['c'], 0.1);
+    ASSERT_EQ(Y['d'], -0.01);
 }
