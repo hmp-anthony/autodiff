@@ -13,8 +13,6 @@
 namespace autodiff {
 
 const std::string ops("(^-+*/)");
-const std::map<std::string, int> priority_map = {{"(", -1}, {"^", 0}, {"-", 1},
-                                                 {"+", 1},  {"*", 2}, {"/", 2}};
 
 class token {
 public:
@@ -53,10 +51,6 @@ public:
         is_binary_operation_ = t.is_binary_operation_;
     }
 
-    bool operator<(const token& t) const { return s_ < t.s_; }
-    bool operator==(const token& t) const { return s_ == t.s_; }
-    bool operator!=(const token& t) const { return s_ != t.s_; }
-
     token operator=(const token& t) {
         s_ = t.s_;
         is_variable_ = t.is_variable_;
@@ -85,9 +79,5 @@ private:
     bool is_constant_;
     bool is_binary_operation_;
 };
-
-const std::map<char, token> ops_map = {{'(', token('(')}, {'+', token('+')},
-                                       {'-', token('-')}, {'*', token('*')},
-                                       {')', token(')')}, {'/', token('/')}};
 
 }  // namespace autodiff

@@ -12,6 +12,9 @@
 using namespace autodiff;
 using namespace base;
 TEST(basic, addition) {
+    // if we are not using gradient functionality
+    // we can declare variables as below. That is
+    // "var a(1)" instead of "var a(1,'a')"
     var a(1);
     var b(10);
 
@@ -61,20 +64,21 @@ TEST(basic, computation_graph_2) {
     var y(12);
 
     auto z = x * x + y * y;
-    std::cout << z.to_string() << std::endl;
+    std::cout << " --------------- " << std::endl;
+    ASSERT_EQ(z.to_string(), "+");
 
     auto zl = z.left();
     auto zr = z.right();
-    std::cout << zl->to_string() << std::endl;
-    std::cout << zr->to_string() << std::endl;
+    ASSERT_EQ(zl->to_string(), "*");
+    ASSERT_EQ(zr->to_string(), "*");
 
     auto zll = zl->left();
     auto zlr = zl->right();
-    std::cout << zll->to_string() << std::endl;
-    std::cout << zlr->to_string() << std::endl;
+    ASSERT_EQ(stod(zll->to_string()), 10.0);
+    ASSERT_EQ(stod(zlr->to_string()), 10.0);
 
     auto zrl = zr->left();
     auto zrr = zr->right();
-    std::cout << zrl->to_string() << std::endl;
-    std::cout << zrr->to_string() << std::endl;
+    ASSERT_EQ(stod(zrl->to_string()), 12.0);
+    ASSERT_EQ(stod(zrr->to_string()), 12.0);
 }
