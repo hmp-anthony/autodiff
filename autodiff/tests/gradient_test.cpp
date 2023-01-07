@@ -43,5 +43,14 @@ TEST(brackets, complex_binary_ops) {
     var b(10, 'b');
     auto z = (a + b) * (a + b);
     auto Z = gradient(z);
-    Z.print_grad();
+    ASSERT_EQ(Z['a'], 40);
+    ASSERT_EQ(Z['b'], 40);
+
+    var c(5, 'c');
+    auto w = (a + b) * (a + b) + c * a * b;
+    auto W = gradient(w);
+    ASSERT_EQ(W['a'], 90);
+    ASSERT_EQ(W['b'], 90);
+    ASSERT_EQ(W['c'], 100);
 }
+
