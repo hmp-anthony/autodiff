@@ -21,6 +21,5 @@ fetch_googletest(
     )
 
 add_subdirectory(autodiff)
-add_subdirectory(examples)
 add_subdirectory(docs)
 
