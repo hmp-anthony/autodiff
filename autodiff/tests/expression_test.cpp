@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <typeinfo>
 
-#include "autodiff/var.hpp"
+#include "var.hpp"
 #include "gtest/gtest.h"
 
 using namespace autodiff;

@@ -8,8 +8,8 @@
 #include <set>
 #include <utility>
 
-#include "autodiff/token.hpp"
-#include "autodiff/var.hpp"
+#include "token.hpp"
+#include "var.hpp"
 
 namespace autodiff {
 namespace base {

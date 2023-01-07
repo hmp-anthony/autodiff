@@ -1,4 +1,4 @@
-#include "autodiff/var.hpp"
+#include "var.hpp"
 
 #include <cstdlib>
 #include <memory>
@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <typeinfo>
 
-#include "autodiff/functions.hpp"
+#include "functions.hpp"
 #include "gtest/gtest.h"
 
 using namespace autodiff;

@@ -1,1 +1,1 @@
-add_subdirectory(autodiff)
+add_subdirectory(tests)

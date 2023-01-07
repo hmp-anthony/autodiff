@@ -1,7 +1,7 @@
 #pragma once
 #include <cmath>
 
-#include "autodiff/var.hpp"
+#include "var.hpp"
 
 namespace autodiff {
 namespace function {
