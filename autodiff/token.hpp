@@ -13,6 +13,7 @@
 namespace autodiff {
 
 const std::string ops("(^-+*/)");
+const std::vector<std::string> fs = {"exp"};
 
 class token {
 public:
@@ -67,6 +68,14 @@ public:
         }
         return false;
     }
+
+    bool is_function() {
+        if (std::find(fs.begin(), fs.end(), s_) != fs.end()) {
+            return true;
+        }
+        return false;
+    }
+
     bool is_constant() { return is_constant_; }
     bool is_open_paren() { return s_ == "("; }
     bool is_closed_paren() { return s_ == ")"; }

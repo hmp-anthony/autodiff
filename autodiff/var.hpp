@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
@@ -25,6 +26,8 @@ public:
           visit_count_(0) {}
     explicit var(std::string s, char name = ' ')
         : t_(s), name_(name), grad_(0), visit_count_(0) {}
+    explicit var(std::string s, double v, char name = ' ')
+        : t_(s), name_(name), grad_(0), visit_count_(0), v_(v) {}
     explicit var(double v, char name = ' ')
         : t_(v), name_(name), grad_(0), visit_count_(0) {
         v_ = v;
@@ -86,6 +89,7 @@ public:
     }
 
     bool is_binary_operation() { return t_.is_binary_operation(); }
+    bool is_function() { return t_.is_function(); }
     bool is_variable() { return t_.is_variable(); }
     bool is_constant() { return t_.is_constant(); }
 
@@ -105,7 +109,7 @@ public:
 
     void grad() {
         if (is_binary_operation()) {
-            std::string str = to_string();
+            auto str = to_string();
             if (str == "*") {
                 multiplication();
             } else if (str == "+") {
@@ -119,7 +123,17 @@ public:
             right()->grad();
             return;
         }
+        if (is_function()) {
+            auto str = to_string();
+            if (str == "exp") {
+                exp();
+            }
+            left()->grad();
+            return;
+        }
     }
+
+    void exp() { left_->grad_ += grad_ * std::exp(left_->eval()); }
 
     void addition() {
         left_->grad_ += grad_;
@@ -157,4 +171,24 @@ private:
 };
 
 }  // namespace base
+
+namespace functions {
+
+using autodiff::base::var;
+
+struct exp {
+    exp() {}
+    var operator()(var& e) {
+        var result("exp", std::exp(e.value()));
+        result.set_left(std::make_shared<var>(e));
+        return result;
+    }
+    var operator()(var&& e) {
+        var result("exp", std::exp(e.value()));
+        result.set_left(std::make_shared<var>(e));
+        return result;
+    }
+};
+
+}  // namespace functions
 }  // namespace autodiff
