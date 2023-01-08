@@ -6,7 +6,6 @@
 #include <type_traits>
 #include <typeinfo>
 
-#include "functions.hpp"
 #include "gtest/gtest.h"
 
 using namespace autodiff;
@@ -28,7 +27,7 @@ TEST(basic, addition) {
 }
 TEST(functions, exp) {
     // testing functions
-    auto exp_ = autodiff::function::exp();
+    auto exp_ = autodiff::functions::exp();
 
     var y_1(10);
     var y_2(1);
@@ -40,8 +39,26 @@ TEST(functions, exp) {
     ASSERT_NEAR(z_1.value(), 59874.1, 0.1);
     ASSERT_NEAR(z_2.value(), 59874.1, 0.1);
 }
+
+TEST(functions, exp_2) {
+    // testing functions
+    auto exp_ = autodiff::functions::exp();
+
+    var y_1(10);
+    var y_2(1);
+    var y_3(10);
+    var y_4(2);
+
+    auto z_1 = exp_(y_1 + y_2) + y_3 * y_4;
+    ASSERT_NEAR(z_1.value(), 59894.1, 0.1);
+    ASSERT_EQ(z_1.to_string(), "+");
+
+    std::cout << z_1.left()->to_string() << std::endl;
+    std::cout << z_1.right()->to_string() << std::endl;
+}
+
 TEST(basic, computation_graph_1) {
-    auto exp_ = autodiff::function::exp();
+    auto exp_ = autodiff::functions::exp();
 
     var y_1(10);
     var y_2(1);
@@ -64,7 +81,6 @@ TEST(basic, computation_graph_2) {
     var y(12);
 
     auto z = x * x + y * y;
-    std::cout << " --------------- " << std::endl;
     ASSERT_EQ(z.to_string(), "+");
 
     auto zl = z.left();

@@ -54,3 +54,12 @@ TEST(brackets, complex_binary_ops) {
     ASSERT_EQ(W['c'], 100);
 }
 
+TEST(functions, exp) {
+    var a(2, 'a');
+    auto exp_ = autodiff::functions::exp();
+    auto c = exp_(a * a);
+
+    auto C = gradient(c);
+    ASSERT_NEAR(C['a'], 218.39, 0.1);
+}
+
