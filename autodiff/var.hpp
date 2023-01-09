@@ -54,16 +54,14 @@ public:
         result.v_ = l.v_.value() + r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
-        auto result_ptr = std::make_shared<var>(result);
         return result;
     }
 
     friend var operator-(const var& l, const var& r) {
-        var result(token(std::string("+")));
+        var result(token(std::string("-")));
         result.v_ = l.v_.value() - r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
-        auto result_ptr = std::make_shared<var>(result);
         return result;
     }
 
@@ -72,7 +70,6 @@ public:
         result.v_ = l.v_.value() * r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
-        auto result_ptr = std::make_shared<var>(result);
         return result;
     }
 
@@ -81,7 +78,13 @@ public:
         result.v_ = l.v_.value() / r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
-        auto result_ptr = std::make_shared<var>(result);
+        return result;
+    }
+
+    friend var operator-(const var& v) {
+        var result(token(std::string("0-")));
+        result.v_ = -1 * v.v_.value();
+        result.left_ = std::make_shared<var>(v);
         return result;
     }
 
@@ -133,18 +136,16 @@ public:
             auto str = to_string();
             if (str == "exp") {
                 exp();
-            }
-            if (str == "sin") {
+            } else if (str == "sin") {
                 sin();
-            }
-            if (str == "cos") {
+            } else if (str == "cos") {
                 cos();
-            }
-            if (str == "ln") {
+            } else if (str == "ln") {
                 ln();
-            }
-            if (str == "log") {
+            } else if (str == "log") {
                 log();
+            } else if (str == "0-") {
+                neg();
             }
             left()->grad();
             return;
@@ -182,6 +183,8 @@ public:
     void ln() { left_->grad_ += grad_ * (1 / left_->eval()); }
 
     void log() { left_->grad_ += grad_ * (1 / (left_->eval() * std::log(2))); }
+
+    void neg() { left_->grad_ += (-1) * grad_; }
 
     double grad_;
     int visit_count_;

@@ -12,8 +12,8 @@
 
 namespace autodiff {
 
-const std::string ops("(^-+*/)");
-const std::vector<std::string> fs = {"exp", "sin", "cos", "log", "ln"};
+const std::vector<std::string> ops = {"(", "^", "-", "+", "*", "/", ")"};
+const std::vector<std::string> fs = {"0-", "exp", "sin", "cos", "log", "ln"};
 
 class token {
 public:
@@ -63,7 +63,7 @@ public:
     const std::string& to_string() const { return s_; }
 
     bool is_binary_operation() {
-        if (s_.find_first_of(ops) != std::string::npos) {
+        if (std::find(ops.begin(), ops.end(), s_) != ops.end()) {
             return true;
         }
         return false;

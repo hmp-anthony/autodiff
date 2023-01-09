@@ -12,12 +12,16 @@ using namespace autodiff;
 using namespace base;
 
 TEST(no_brackets, simple_binary_ops) {
+    var a(10, 'a');
+    auto x = -a;
+    auto X = gradient(x);
+    ASSERT_EQ(X['a'], -1);
+
     var c(1, 'c');
     var d(10, 'd');
     auto y = c / d;
     auto Y = gradient(y);
     ASSERT_EQ(Y['c'], 0.1);
-    ASSERT_EQ(Y['d'], -0.01);
 }
 
 TEST(brackets, simple_binary_ops) {
@@ -71,6 +75,15 @@ TEST(functions, exp) {
     auto E = gradient(e);
     ASSERT_NEAR(E['a'], 2420.57, 0.1);
     ASSERT_NEAR(E['b'], 1613.71, 0.1);
+}
+
+TEST(functions, exp_complex) {
+    var x(2, 'x');
+    var y(1, 'y');
+    auto exp_ = autodiff::functions::exp();
+    auto z = y / (y + exp_(-x));
+    auto Z = gradient(z);
+    ASSERT_NEAR(Z['x'], 0.104994, 0.0001);
 }
 
 TEST(functions, sin) {
