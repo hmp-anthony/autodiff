@@ -73,3 +73,39 @@ TEST(functions, exp) {
     ASSERT_NEAR(E['b'], 1613.71, 0.1);
 }
 
+TEST(functions, sin) {
+    var a(2, 'a');
+    auto sin_ = autodiff::functions::sin();
+    auto c = sin_(a * a);
+    auto C = gradient(c);
+    ASSERT_NEAR(C['a'], -2.61457, 0.001);
+}
+
+TEST(functions, cos) {
+    var a(2, 'a');
+    auto cos_ = autodiff::functions::cos();
+    auto c = cos_(a * a);
+    auto C = gradient(c);
+    ASSERT_NEAR(C['a'], 3.0272, 0.001);
+
+    var b(1, 'b');
+    auto d = cos_(b);
+    auto D = gradient(d);
+    ASSERT_NEAR(D['b'], -0.8414709, 0.001);
+}
+
+TEST(functions, ln) {
+    var a(2, 'a');
+    auto ln_ = autodiff::functions::ln();
+    auto c = ln_(a * a);
+    auto C = gradient(c);
+    ASSERT_NEAR(C['a'], 1.0, 0.001);
+}
+
+TEST(functions, log) {
+    var a(2, 'a');
+    auto log_ = autodiff::functions::log();
+    auto c = log_(a * a);
+    auto C = gradient(c);
+    ASSERT_NEAR(C['a'], 1.44269504, 0.001);
+}
