@@ -22,4 +22,4 @@ fetch_googletest(
 
 add_subdirectory(autodiff)
 add_subdirectory(docs)
-
+add_subdirectory(examples)
