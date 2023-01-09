@@ -13,7 +13,13 @@
 #include "var.hpp"
 
 namespace autodiff {
+
+namespace functions {
+double log_b(double arg, double base) { return std::log(arg) / std::log(base); }
+}  // namespace functions
+
 namespace base {
+
 class var {
 public:
     var(const var& v)
@@ -128,12 +134,22 @@ public:
             if (str == "exp") {
                 exp();
             }
+            if (str == "sin") {
+                sin();
+            }
+            if (str == "cos") {
+                cos();
+            }
+            if (str == "ln") {
+                ln();
+            }
+            if (str == "log") {
+                log();
+            }
             left()->grad();
             return;
         }
     }
-
-    void exp() { left_->grad_ += grad_ * std::exp(left_->eval()); }
 
     void addition() {
         left_->grad_ += grad_;
@@ -156,6 +172,16 @@ public:
         (left())->grad_ -= grad_;
         (right())->grad_ += grad_;
     }
+
+    void exp() { left_->grad_ += grad_ * std::exp(left_->eval()); }
+
+    void sin() { left_->grad_ += std::cos(left_->eval()); }
+
+    void cos() { left_->grad_ -= std::sin(left_->eval()); }
+
+    void ln() { left_->grad_ += grad_ * (1 / left_->eval()); }
+
+    void log() { left_->grad_ += grad_ * (1 / (left_->eval() * std::log(2))); }
 
     double grad_;
     int visit_count_;
@@ -185,6 +211,66 @@ struct exp {
     }
     var operator()(var&& e) {
         var result("exp", std::exp(e.value()));
+        result.set_left(std::make_shared<var>(e));
+        return result;
+    }
+};
+
+struct sin {
+    sin() {}
+
+    var operator()(var& e) {
+        var result("sin", std::sin(e.value()));
+        result.set_left(std::make_shared<var>(e));
+        return result;
+    }
+    var operator()(var&& e) {
+        var result("sin", std::sin(e.value()));
+        result.set_left(std::make_shared<var>(e));
+        return result;
+    }
+};
+
+struct cos {
+    cos() {}
+
+    var operator()(var& e) {
+        var result("cos", std::cos(e.value()));
+        result.set_left(std::make_shared<var>(e));
+        return result;
+    }
+    var operator()(var&& e) {
+        var result("cos", std::cos(e.value()));
+        result.set_left(std::make_shared<var>(e));
+        return result;
+    }
+};
+
+struct ln {
+    ln() {}
+
+    var operator()(var& e) {
+        var result("ln", std::log(e.value()));
+        result.set_left(std::make_shared<var>(e));
+        return result;
+    }
+    var operator()(var&& e) {
+        var result("ln", std::log(e.value()));
+        result.set_left(std::make_shared<var>(e));
+        return result;
+    }
+};
+
+struct log {
+    log() {}
+
+    var operator()(var& e) {
+        var result("log", std::log(e.value()) / std::log(2));
+        result.set_left(std::make_shared<var>(e));
+        return result;
+    }
+    var operator()(var&& e) {
+        var result("log", std::log(e.value()) / std::log(2));
         result.set_left(std::make_shared<var>(e));
         return result;
     }
