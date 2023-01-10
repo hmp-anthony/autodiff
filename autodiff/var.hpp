@@ -4,12 +4,12 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <optional>
 #include <set>
 #include <utility>
 #include <vector>
-#include <map>
 
 #include "token.hpp"
 #include "var.hpp"
@@ -29,8 +29,7 @@ public:
         : t_(s), name_(name), grad_(0) {}
     explicit var(std::string s, double v, char name = ' ')
         : t_(s), name_(name), grad_(0), v_(v) {}
-    explicit var(double v, char name = ' ')
-        : t_(v), name_(name), grad_(0) {
+    explicit var(double v, char name = ' ') : t_(v), name_(name), grad_(0) {
         v_ = v;
     }
     explicit var(token t, char name = ' ')
@@ -43,11 +42,7 @@ public:
           right_(std::move(n.right_)),
           v_(n.v_) {}
 
-    static std::map<const var*, int> variables_;
-
     friend var operator+(const var& l, const var& r) {
-        variables_[&l] += 1;
-        variables_[&r] += 1;
         var result(token(std::string("+")));
         result.v_ = l.v_.value() + r.v_.value();
         result.left_ = std::make_shared<var>(l);
@@ -56,8 +51,6 @@ public:
     }
 
     friend var operator-(const var& l, const var& r) {
-        variables_[&l] += 1;
-        variables_[&r] += 1;
         var result(token(std::string("-")));
         result.v_ = l.v_.value() - r.v_.value();
         result.left_ = std::make_shared<var>(l);
@@ -66,8 +59,6 @@ public:
     }
 
     friend var operator*(const var& l, const var& r) {
-        variables_[&l] += 1;
-        variables_[&r] += 1;
         var result(token(std::string("*")));
         result.v_ = l.v_.value() * r.v_.value();
         result.left_ = std::make_shared<var>(l);
@@ -76,8 +67,6 @@ public:
     }
 
     friend var operator/(const var& l, const var& r) {
-        variables_[&l] += 1;
-        variables_[&r] += 1;
         var result(token(std::string("/")));
         result.v_ = l.v_.value() / r.v_.value();
         result.left_ = std::make_shared<var>(l);
@@ -86,7 +75,6 @@ public:
     }
 
     friend var operator-(const var& v) {
-        variables_[&v] += 1;
         var result(token(std::string("0-")));
         result.v_ = -1 * v.v_.value();
         result.left_ = std::make_shared<var>(v);
@@ -205,8 +193,6 @@ private:
     std::optional<double> v_;
 };
 
-std::map<const var*, int> var::variables_;
-
 }  // namespace base
 
 namespace functions {
@@ -286,8 +272,6 @@ struct log {
         return result;
     }
 };
-
-
 
 }  // namespace functions
 }  // namespace autodiff

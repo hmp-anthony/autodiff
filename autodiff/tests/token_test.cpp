@@ -27,5 +27,13 @@ TEST(token, basic) {
 
     token t6 = ",";
     ASSERT_TRUE(t6.is_comma());
+
+    token t7 = "x";
+    ASSERT_EQ(t7.is_variable(), true);
+    ASSERT_EQ(t7.is_constant(), false);
+
+    token t8 = "y";
+    ASSERT_EQ(t8.is_variable(), true);
+    ASSERT_EQ(t8.is_constant(), false);
 }
 
