@@ -17,11 +17,11 @@ public:
     double operator[](char x) { return gradients_[x]; }
 
     void grad() {
-        head_->grad_ = 1;
+        head_->set_gradient(1.0);
         head_->grad();
         // collect contributions
         for (const auto& v : variables_) {
-            gradients_[v->name()] += v->grad_;
+            gradients_[v->name()] += v->get_gradient();
         }
     }
 
