@@ -42,11 +42,20 @@ public:
           right_(std::move(n.right_)),
           v_(n.v_) {}
 
+    static std::map<const var*,std::vector<std::shared_ptr<var>>> aliases;
+
     friend var operator+(const var& l, const var& r) {
         var result(token(std::string("+")));
         result.v_ = l.v_.value() + r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
+
+        if(!(result.left_->is_binary_operation())) {
+            aliases[&l].push_back(result.left_);
+        }
+        if(!(result.right_->is_binary_operation())) {
+            aliases[&r].push_back(result.right_);
+        }
         return result;
     }
 
@@ -63,6 +72,12 @@ public:
         result.v_ = l.v_.value() * r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
+        if(!(result.left_->is_binary_operation())) {
+            aliases[&l].push_back(result.left_);
+        }
+        if(!(result.right_->is_binary_operation())) {
+            aliases[&r].push_back(result.right_);
+        }
         return result;
     }
 
@@ -184,14 +199,17 @@ public:
 
     const std::string& to_string() { return t_.to_string(); }
 
+        double grad_;
+
 private:
     token t_;
     char name_;
-    double grad_;
     std::shared_ptr<var> left_;
     std::shared_ptr<var> right_;
     std::optional<double> v_;
 };
+
+std::map<const var*,std::vector<std::shared_ptr<var>>> var::aliases;
 
 }  // namespace base
 

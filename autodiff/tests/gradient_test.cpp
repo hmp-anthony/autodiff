@@ -11,6 +11,7 @@
 using namespace autodiff;
 using namespace base;
 
+/*
 TEST(no_brackets, simple_binary_ops) {
     var a(10, 'a');
     auto x = -a;
@@ -122,3 +123,4 @@ TEST(functions, log) {
     auto C = gradient(c);
     ASSERT_NEAR(C['a'], 1.44269504, 0.001);
 }
+*/

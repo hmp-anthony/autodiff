@@ -5,10 +5,10 @@
 using autodiff::base::var;
 
 int main() {
-    var a(10, 'a');
-    var b(20, 'b');
+    var a(10);
+    var b(20);
 
-    auto c = a + b * a * a;
+    auto c = a + b + a * a;
     auto C = autodiff::base::gradient(c);
 
     C.print_grad();

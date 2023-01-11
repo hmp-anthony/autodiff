@@ -14,19 +14,26 @@ public:
         grad();
     }
 
-    double operator[](char x) { return gradients_[x]; }
+    //double operator[](char x) { return gradients_[x]; }
 
-    void grad() {
+    double grad() {
         head_->set_gradient(1.0);
         head_->grad();
         // collect contributions
         for (const auto& v : variables_) {
-            gradients_[v->name()] += v->get_gradient();
+            for(const auto& w : var::aliases) {
+                for(const auto& r : w.second) {
+                    if(r == v) {
+                        gradients_[w.first] += r->grad_;
+                    }
+                }
+            }
         }
     }
 
     void print_grad() {
         for (const auto& v : gradients_) {
+            std::cout << "-..........." << std::endl;
             std::cout << v.first << " " << v.second << std::endl;
         }
     }
@@ -46,7 +53,7 @@ private:
 
     std::shared_ptr<var> head_;
     std::list<std::shared_ptr<var>> variables_;
-    std::map<char, double> gradients_;
+    std::map<const var *, double> gradients_;
 };
 }  // namespace base
 }  // namespace autodiff
