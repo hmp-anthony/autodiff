@@ -1,12 +1,12 @@
 # autodiff 
 
-This is definitely a work in progress.
-
 To build :
 `make`
 
 To test :
 `make test`
+
+An implmentation of gradient descent:
 
 ```
 #include <iostream>                                                                            
