@@ -64,6 +64,12 @@ public:
         result.v_ = l.v_.value() - r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
+        if(!(result.left_->is_binary_operation())) {
+            aliases[&l].push_back(result.left_);
+        }
+        if(!(result.right_->is_binary_operation())) {
+            aliases[&r].push_back(result.right_);
+        }
         return result;
     }
 
@@ -86,6 +92,12 @@ public:
         result.v_ = l.v_.value() / r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
+        if(!(result.left_->is_binary_operation())) {
+            aliases[&l].push_back(result.left_);
+        }
+        if(!(result.right_->is_binary_operation())) {
+            aliases[&r].push_back(result.right_);
+        }
         return result;
     }
 
@@ -93,6 +105,9 @@ public:
         var result(token(std::string("0-")));
         result.v_ = -1 * v.v_.value();
         result.left_ = std::make_shared<var>(v);
+        if(!(result.left_->is_binary_operation())) {
+            aliases[&v].push_back(result.left_);
+        }
         return result;
     }
 
@@ -199,7 +214,7 @@ public:
 
     const std::string& to_string() { return t_.to_string(); }
 
-        double grad_;
+    double grad_;
 
 private:
     token t_;
@@ -222,11 +237,17 @@ struct exp {
     var operator()(var& e) {
         var result("exp", std::exp(e.value()));
         result.set_left(std::make_shared<var>(e));
+        if(!(result.left()->is_binary_operation())) {
+            var::aliases[&e].push_back(result.left());
+        }
         return result;
     }
     var operator()(var&& e) {
         var result("exp", std::exp(e.value()));
         result.set_left(std::make_shared<var>(e));
+        if(!(result.left()->is_binary_operation())) {
+            var::aliases[&e].push_back(result.left());
+        }
         return result;
     }
 };
@@ -237,11 +258,17 @@ struct sin {
     var operator()(var& e) {
         var result("sin", std::sin(e.value()));
         result.set_left(std::make_shared<var>(e));
+        if(!(result.left()->is_binary_operation())) {
+            var::aliases[&e].push_back(result.left());
+        }
         return result;
     }
     var operator()(var&& e) {
         var result("sin", std::sin(e.value()));
         result.set_left(std::make_shared<var>(e));
+        if(!(result.left()->is_binary_operation())) {
+            var::aliases[&e].push_back(result.left());
+        }
         return result;
     }
 };
@@ -252,11 +279,17 @@ struct cos {
     var operator()(var& e) {
         var result("cos", std::cos(e.value()));
         result.set_left(std::make_shared<var>(e));
+        if(!(result.left()->is_binary_operation())) {
+            var::aliases[&e].push_back(result.left());
+        }
         return result;
     }
     var operator()(var&& e) {
         var result("cos", std::cos(e.value()));
         result.set_left(std::make_shared<var>(e));
+        if(!(result.left()->is_binary_operation())) {
+            var::aliases[&e].push_back(result.left());
+        }
         return result;
     }
 };
@@ -267,11 +300,17 @@ struct ln {
     var operator()(var& e) {
         var result("ln", std::log(e.value()));
         result.set_left(std::make_shared<var>(e));
+        if(!(result.left()->is_binary_operation())) {
+            var::aliases[&e].push_back(result.left());
+        }
         return result;
     }
     var operator()(var&& e) {
         var result("ln", std::log(e.value()));
         result.set_left(std::make_shared<var>(e));
+        if(!(result.left()->is_binary_operation())) {
+            var::aliases[&e].push_back(result.left());
+        }
         return result;
     }
 };
@@ -282,11 +321,17 @@ struct log {
     var operator()(var& e) {
         var result("log", std::log(e.value()) / std::log(2));
         result.set_left(std::make_shared<var>(e));
+        if(!(result.left()->is_binary_operation())) {
+            var::aliases[&e].push_back(result.left());
+        }
         return result;
     }
     var operator()(var&& e) {
         var result("log", std::log(e.value()) / std::log(2));
         result.set_left(std::make_shared<var>(e));
+        if(!(result.left()->is_binary_operation())) {
+            var::aliases[&e].push_back(result.left());
+        }
         return result;
     }
 };

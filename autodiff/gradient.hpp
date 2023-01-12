@@ -14,7 +14,7 @@ public:
         grad();
     }
 
-    //double operator[](char x) { return gradients_[x]; }
+    double operator[](var& x) { return gradients_[&x]; }
 
     double grad() {
         head_->set_gradient(1.0);

@@ -8,9 +8,9 @@ int main() {
     var a(10);
     var b(20);
 
-    auto c = a + b + a * a;
+    auto c = a * a + b + a * a;
     auto C = autodiff::base::gradient(c);
-
-    C.print_grad();
+    std::cout << C[a] << std::endl;
+    std::cout << C[b] << std::endl;
     return 0;
 }
