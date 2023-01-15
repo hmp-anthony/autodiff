@@ -52,9 +52,6 @@ TEST(functions, exp_2) {
     auto z_1 = exp_(y_1 + y_2) + y_3 * y_4;
     ASSERT_NEAR(z_1.value(), 59894.1, 0.1);
     ASSERT_EQ(z_1.to_string(), "+");
-
-    std::cout << z_1.left()->to_string() << std::endl;
-    std::cout << z_1.right()->to_string() << std::endl;
 }
 
 TEST(basic, computation_graph_1) {

@@ -172,6 +172,8 @@ public:
                 log();
             } else if (str == "0-") {
                 neg();
+            } else if (str == "pow") {
+                pow();
             }
             left()->grad();
             return;
@@ -212,6 +214,13 @@ public:
 
     void neg() { left_->grad_ += (-1) * grad_; }
 
+    void pow() {
+        auto r = right()->value();
+        auto l = left()->value();
+        left()->grad_ += grad_ * r * std::pow(l, r -1);
+        right()->grad_ += grad_ * value() * std::log(l);
+    }
+
     const std::string& to_string() { return t_.to_string(); }
 
     double grad_;
@@ -231,6 +240,22 @@ std::map<const var*,std::vector<std::shared_ptr<var>>> var::aliases;
 namespace functions {
 
 using autodiff::base::var;
+
+struct pow {
+    pow() {}
+    var operator()(var& x, var& y) {
+        var result("pow", std::pow(x.value(), y.value()));
+        result.set_left(std::make_shared<var>(x));
+        result.set_right(std::make_shared<var>(y));
+        if(!(result.left()->is_binary_operation())) {
+            var::aliases[&x].push_back(result.left());
+        }
+        if(!(result.right()->is_binary_operation())) {
+            var::aliases[&y].push_back(result.right());
+        }
+        return result;
+    }
+};
 
 struct exp {
     exp() {}

@@ -13,7 +13,7 @@
 namespace autodiff {
 
 const std::vector<std::string> ops = {"(", "^", "-", "+", "*", "/", ")"};
-const std::vector<std::string> fs = {"0-", "exp", "sin", "cos", "log", "ln"};
+const std::vector<std::string> fs = {"0-", "exp", "sin", "cos", "log", "ln", "pow"};
 
 class token {
 public:

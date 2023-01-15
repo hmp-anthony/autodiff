@@ -90,9 +90,7 @@ TEST(functions, exp_complex) {
 TEST(functions, sin) {
     var a(2);
     auto sin_ = autodiff::functions::sin();
-    std::cout << "entering sin" << std::endl;
     auto c = sin_(a * a);
-    std::cout << "defined var" << std::endl;
     auto C = gradient(c);
     ASSERT_NEAR(C[a], -2.61457, 0.001);
 }
@@ -126,3 +124,19 @@ TEST(functions, log) {
     ASSERT_NEAR(C[a], 1.44269504, 0.001);
 }
 
+TEST(functions, pow) {
+    var a(2);
+    var b(2);
+    auto pow_ = autodiff::functions::pow();
+    auto c = pow_(a, b);
+    auto C = gradient(c);
+    ASSERT_NEAR(C[a], 4.0, 0.01);
+    ASSERT_NEAR(C[b], 2.77259, 0.01);
+
+    var x(3);
+    var y(4);
+    auto d = pow_(x, y);
+    auto D = gradient(d);
+    ASSERT_NEAR(D[x], 108.0, 0.01);
+    ASSERT_NEAR(D[y], 88.9876, 0.01);
+}
