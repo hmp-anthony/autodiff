@@ -6,8 +6,6 @@
 #include <type_traits>
 #include <typeinfo>
 
-#include "gtest/gtest.h"
-
 using namespace autodiff;
 using namespace base;
 

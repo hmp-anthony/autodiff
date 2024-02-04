@@ -1,7 +1,5 @@
 #include "token.hpp"
 
-#include "gtest/gtest.h"
-
 using namespace autodiff;
 
 TEST(token, basic) {
