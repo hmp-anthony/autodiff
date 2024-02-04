@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 set(CMAKE_CXX_STANDARD 17)
-project(autodiff)
+project(autodiff CXX)
 
 if (MSVC)
     # Solves complications that arrise in the runtime when compiling
@@ -9,10 +9,9 @@ if (MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 endif (MSVC)
 
+enable_testing()
 
 include_directories(autodiff) 
-
-enable_testing()
 
 include(cmake/googletest.cmake)
 fetch_googletest(
