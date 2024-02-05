@@ -7,10 +7,10 @@ using autodiff::base::var;
 using autodiff::functions::cos;
 
 int main() {
-    double a_ = 10;
-    double b_ = 20;
+    double a_ = 1;
+    double b_ = 1;
 
-    double gamma_ = 0.01;
+    double gamma_ = 0.1;
 
     auto cos_ = autodiff::functions::cos();
 
@@ -24,8 +24,7 @@ int main() {
         // take a step
         a_ = a_ - gamma_*C[a];
         b_ = b_ - gamma_*C[b];
-        std::cout << a_ << std::endl;
-        std::cout << b_ << std::endl;
+        std::cout << a_ << " " << b_ << std::endl;
     }
     return 0;
 }
