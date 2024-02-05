@@ -20,23 +20,21 @@ class var {
 public:
     var(const var& v)
         : t_(v.t_),
-          name_(v.name_),
           grad_(0),
           left_(std::move(v.left_)),
           right_(std::move(v.right_)),
           v_(v.v_) {}
     explicit var(std::string s, char name = ' ')
-        : t_(s), name_(name), grad_(0) {}
+        : t_(s), grad_(0) {}
     explicit var(std::string s, double v, char name = ' ')
-        : t_(s), name_(name), grad_(0), v_(v) {}
-    explicit var(double v, char name = ' ') : t_(v), name_(name), grad_(0) {
+        : t_(s), grad_(0), v_(v) {}
+    explicit var(double v, char name = ' ') : t_(v), grad_(0) {
         v_ = v;
     }
     explicit var(token t, char name = ' ')
-        : t_(std::move(t)), name_(name), grad_(0){};
+        : t_(std::move(t)), grad_(0){};
     explicit var(var&& n, char name = ' ')
         : t_(std::move(n.t_)),
-          name_(name),
           grad_(0),
           left_(std::move(n.left_)),
           right_(std::move(n.right_)),
@@ -113,7 +111,6 @@ public:
 
     var operator=(const var& v) {
         t_ = v.t_;
-        name_ = v.name_;
         v_ = v.v_;
         left_ = v.left_;
         right_ = v.right_;
@@ -131,7 +128,6 @@ public:
     std::shared_ptr<var>& left() { return left_; }
     std::shared_ptr<var>& right() { return right_; }
 
-    char name() const { return name_; }
     double value() { return v_.value(); }
     void reset_value() { v_.reset(); }
 
@@ -227,7 +223,6 @@ public:
 
 private:
     token t_;
-    char name_;
     std::shared_ptr<var> left_;
     std::shared_ptr<var> right_;
     std::optional<double> v_;
