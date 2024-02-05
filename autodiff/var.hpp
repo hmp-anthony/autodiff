@@ -40,18 +40,21 @@ public:
 
     static std::map<const var*,std::vector<std::shared_ptr<var>>> aliases;
 
-    friend var operator+(const var& l, const var& r) {
-        var result(token(std::string("+")));
-        result.v_ = l.v_.value() + r.v_.value();
-        result.left_ = std::make_shared<var>(l);
-        result.right_ = std::make_shared<var>(r);
-
+    friend void update_aliases(const var& l, const var& r, var& result) {
         if(!(result.left_->is_binary_operation())) {
             aliases[&l].push_back(result.left_);
         }
         if(!(result.right_->is_binary_operation())) {
             aliases[&r].push_back(result.right_);
         }
+    }
+
+    friend var operator+(const var& l, const var& r) {
+        var result(token(std::string("+")));
+        result.v_ = l.v_.value() + r.v_.value();
+        result.left_ = std::make_shared<var>(l);
+        result.right_ = std::make_shared<var>(r);
+        update_aliases(l, r, result);
         return result;
     }
 
@@ -60,12 +63,7 @@ public:
         result.v_ = l.v_.value() - r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
-        if(!(result.left_->is_binary_operation())) {
-            aliases[&l].push_back(result.left_);
-        }
-        if(!(result.right_->is_binary_operation())) {
-            aliases[&r].push_back(result.right_);
-        }
+        update_aliases(l, r, result);
         return result;
     }
 
@@ -74,12 +72,7 @@ public:
         result.v_ = l.v_.value() * r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
-        if(!(result.left_->is_binary_operation())) {
-            aliases[&l].push_back(result.left_);
-        }
-        if(!(result.right_->is_binary_operation())) {
-            aliases[&r].push_back(result.right_);
-        }
+        update_aliases(l, r, result);
         return result;
     }
 
@@ -88,12 +81,7 @@ public:
         result.v_ = l.v_.value() / r.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
-        if(!(result.left_->is_binary_operation())) {
-            aliases[&l].push_back(result.left_);
-        }
-        if(!(result.right_->is_binary_operation())) {
-            aliases[&r].push_back(result.right_);
-        }
+        update_aliases(l, r, result);
         return result;
     }
 

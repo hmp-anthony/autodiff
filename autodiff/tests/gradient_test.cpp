@@ -10,7 +10,6 @@
 using namespace autodiff;
 using namespace base;
 
-
 TEST(no_brackets, simple_binary_ops) {
     var a(10);
     auto x = -a;
@@ -25,12 +24,12 @@ TEST(no_brackets, simple_binary_ops) {
 }
 
 TEST(brackets, simple_binary_ops) {
-    var c(1);
-    var d(1);
+    var c(2);
+    var d(5);
     auto y = (c + d) * d;
     auto Y = gradient(y);
-    ASSERT_EQ(Y[c], 1);
-    ASSERT_EQ(Y[d], 3);
+    ASSERT_EQ(Y[c], 5);
+    ASSERT_EQ(Y[d], 12);
 }
 
 TEST(no_brackets, complex_binary_ops) {
