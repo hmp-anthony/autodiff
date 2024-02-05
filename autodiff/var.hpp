@@ -24,8 +24,6 @@ public:
           left_(std::move(v.left_)),
           right_(std::move(v.right_)),
           v_(v.v_) {}
-    explicit var(std::string s)
-        : t_(s), grad_(0) {}
     explicit var(std::string s, double v)
         : t_(s), grad_(0), v_(v) {}
     explicit var(double v) : t_(v), grad_(0) {
