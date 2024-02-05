@@ -1,4 +1,5 @@
 #include "gradient.hpp"
+#include "gtest/gtest.h"
 
 #include <cstdlib>
 #include <memory>
