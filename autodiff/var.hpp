@@ -24,16 +24,16 @@ public:
           left_(std::move(v.left_)),
           right_(std::move(v.right_)),
           v_(v.v_) {}
-    explicit var(std::string s, char name = ' ')
+    explicit var(std::string s)
         : t_(s), grad_(0) {}
-    explicit var(std::string s, double v, char name = ' ')
+    explicit var(std::string s, double v)
         : t_(s), grad_(0), v_(v) {}
-    explicit var(double v, char name = ' ') : t_(v), grad_(0) {
+    explicit var(double v) : t_(v), grad_(0) {
         v_ = v;
     }
-    explicit var(token t, char name = ' ')
+    explicit var(token t)
         : t_(std::move(t)), grad_(0){};
-    explicit var(var&& n, char name = ' ')
+    explicit var(var&& n)
         : t_(std::move(n.t_)),
           grad_(0),
           left_(std::move(n.left_)),
