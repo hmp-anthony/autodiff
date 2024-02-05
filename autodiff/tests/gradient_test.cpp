@@ -25,8 +25,8 @@ TEST(no_brackets, simple_binary_ops) {
 }
 
 TEST(brackets, simple_binary_ops) {
-    var c(1, 'c');
-    var d(1, 'd');
+    var c(1);
+    var d(1);
     auto y = (c + d) * d;
     auto Y = gradient(y);
     ASSERT_EQ(Y[c], 1);

@@ -11,9 +11,6 @@
 using namespace autodiff;
 using namespace base;
 TEST(basic, addition) {
-    // if we are not using gradient functionality
-    // we can declare variables as below. That is
-    // "var a(1)" instead of "var a(1,'a')"
     var a(1);
     var b(10);
 
