@@ -17,4 +17,4 @@ clean:
 .PHONY: clean
 
 ${BUILDDIR}/Makefile:
-	cmake -S . -B${BUILDDIR} ${CMAKE_ARGS}
+	cmake -S . -B${BUILDDIR} ${CMAKE_ARGS} -DINSTALL_GTEST=OFF
