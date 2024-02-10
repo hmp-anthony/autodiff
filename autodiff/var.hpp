@@ -40,6 +40,8 @@ public:
 
     static std::map<const var*,std::vector<std::shared_ptr<var>>> aliases;
 
+    auto get_aliases() { return aliases; }
+
     friend void update_aliases(const var& l, const var& r, var& result) {
         if(!(result.left_->is_binary_operation())) {
             aliases[&l].push_back(result.left_);
@@ -114,7 +116,10 @@ public:
     std::shared_ptr<var>& left() { return left_; }
     std::shared_ptr<var>& right() { return right_; }
 
-    double value() { return v_.value(); }
+    double value() const { 
+        if(v_) {return v_.value();}
+        return 0;
+    }
     void reset_value() { v_.reset(); }
 
     token& get_token() { return t_; }
