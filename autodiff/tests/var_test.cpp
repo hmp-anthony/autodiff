@@ -92,21 +92,3 @@ TEST(basic, computation_graph_2) {
     ASSERT_EQ(stod(zrl->to_string()), 12.0);
     ASSERT_EQ(stod(zrr->to_string()), 12.0);
 }
-
-TEST(changing_values, variables) {
-    var x(10);
-    var y(2);
-    auto z = x * x;
-
-    std::cout << "--------" << std::endl;
-     
-    auto aliases = y.get_aliases();
-
-    for (auto const& [key, val] : aliases) {
-        std::cout << key << ':' << std::endl;
-        std::cout << key->value() << std::endl;
-        for(auto const& v : val) {
-            std::cout << '\t' << v << std::endl;
-        }
-    }
-}

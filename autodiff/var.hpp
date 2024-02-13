@@ -41,6 +41,7 @@ public:
     static std::map<const var*,std::vector<std::shared_ptr<var>>> aliases;
 
     auto get_aliases() { return aliases; }
+    void purge_aliases() { aliases.clear(); }
 
     friend void update_aliases(const var& l, const var& r, var& result) {
         if(!(result.left_->is_binary_operation())) {
@@ -208,7 +209,7 @@ public:
         right()->grad_ += grad_ * value() * std::log(l);
     }
 
-    const std::string& to_string() { return t_.to_string(); }
+    const std::string& to_string() const { return t_.to_string(); }
 
     double grad_;
 
