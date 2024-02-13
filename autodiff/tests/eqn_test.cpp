@@ -12,6 +12,8 @@ TEST(basic, eqn) {
     std::cout << &x << "is the address of x" << std::endl;
     std::cout << &y << "is the address of y" << std::endl;
 
+    std::cout << "-------------" << std::endl;
+
     auto e1 = eqn(x * x + y * y);
     auto e2 = eqn(x * (x + y));
 }
