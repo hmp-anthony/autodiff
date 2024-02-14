@@ -40,9 +40,6 @@ public:
 
     static std::map<const var*,std::vector<std::shared_ptr<var>>> aliases;
 
-    auto get_aliases() { return aliases; }
-    void purge_aliases() { aliases.clear(); }
-
     friend void update_aliases(const var& l, const var& r, var& result) {
         if(!(result.left_->is_binary_operation())) {
             aliases[&l].push_back(result.left_);

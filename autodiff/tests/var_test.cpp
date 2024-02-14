@@ -22,6 +22,7 @@ TEST(basic, addition) {
     ASSERT_EQ(a_->value(), 1);
     ASSERT_EQ(b_->value(), 10);
 }
+
 TEST(functions, exp) {
     // testing functions
     auto exp_ = autodiff::functions::exp();
@@ -70,6 +71,7 @@ TEST(basic, computation_graph_1) {
     ASSERT_TRUE(g->left()->value() == 10);
     ASSERT_TRUE(g->right()->value() == 1);
 }
+
 TEST(basic, computation_graph_2) {
     var x(10);
     var y(12);
@@ -91,4 +93,16 @@ TEST(basic, computation_graph_2) {
     auto zrr = zr->right();
     ASSERT_EQ(stod(zrl->to_string()), 12.0);
     ASSERT_EQ(stod(zrr->to_string()), 12.0);
+}
+
+TEST(basic, change_values) {
+    var x(10);
+    var y(12);
+
+    auto z = x * x + y * y;
+    ASSERT_EQ(z.eval(), 244);
+
+    set_value(&x, 1);
+    set_value(&y, 2);
+    ASSERT_EQ(z.eval(), 5);
 }

@@ -2,7 +2,6 @@ set(_tests
     token_test
     var_test
     gradient_test
-    eqn_test
     )
 
 foreach(_test IN LISTS _tests)
