@@ -122,6 +122,7 @@ public:
         return 0;
     }
     void reset_value() { v_.reset(); }
+    void set_value(double x) { v_ = x; }
 
     token& get_token() { return t_; }
 
