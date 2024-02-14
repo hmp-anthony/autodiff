@@ -6,13 +6,12 @@ namespace autodiff {
 namespace base {
 class eqn {
 public:
-    eqn(var&& v) : v_(&v) {
+    eqn(var* v) : v_(v) {
         aliases_ = v_->get_aliases();
-        v_->purge_aliases();
     }
 
-    double value() {
-        return v_->value();
+    double eval() {
+        return v_->eval();
     }
 
     void print_aliases() {

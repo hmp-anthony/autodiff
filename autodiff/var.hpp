@@ -52,6 +52,14 @@ public:
         }
     }
 
+    friend void set_value(var* v, double value) { 
+        auto a = aliases[v];
+        v->set_value(value);
+        for(auto& e: a) {
+            e->set_value(value);
+        }
+    }
+
     friend var operator+(const var& l, const var& r) {
         var result(token(std::string("+")));
         result.v_ = l.v_.value() + r.v_.value();
@@ -121,12 +129,25 @@ public:
         if(v_) {return v_.value();}
         return 0;
     }
+
     void reset_value() { v_.reset(); }
-    void set_value(double x) { v_ = x; }
+
+    void set_value(double x) {
+        v_ = x;
+    }
+
 
     token& get_token() { return t_; }
 
-    double eval() { return v_.value(); }
+    double eval() { 
+        if(t_.to_string() == "+") {
+            return left_->eval() + right_->eval();
+        } else if(t_.to_string() == "*") {
+            return left_->eval() * right_->eval();
+        } else {
+            return v_.value();
+        }
+    }
 
     double get_gradient() { return grad_; }
     void set_gradient(double grad) { grad_ = grad; }

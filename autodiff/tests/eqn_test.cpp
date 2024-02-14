@@ -14,15 +14,15 @@ TEST(basic, eqn) {
 
     std::cout << "-------------" << std::endl;
 
-    auto e1 = eqn(x * x + y * y);
+    auto e = x * x + y * y;
+    eqn e1(&e);
     e1.print_aliases();
-    std::cout << "value " << e1.value() << std::endl;
-    x.set_value(1);
-    y.set_value(2);
-    std::cout << "value " << e1.value() << std::endl;
-    /*
-    auto e2 = eqn(x * (x + y));
-    std::cout << e2.value() << std::endl;
+    std::cout << "value " << e1.eval() << std::endl;
+    set_value(&x, 1);
+    set_value(&y, 2);
+    std::cout << "value " << e1.eval() << std::endl;
+
+    auto f = x * (x + y);
+    eqn e2(&f);
     e2.print_aliases();
-    */
 }
