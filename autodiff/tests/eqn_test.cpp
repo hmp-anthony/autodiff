@@ -15,5 +15,14 @@ TEST(basic, eqn) {
     std::cout << "-------------" << std::endl;
 
     auto e1 = eqn(x * x + y * y);
+    e1.print_aliases();
+    std::cout << "value " << e1.value() << std::endl;
+    x.set_value(1);
+    y.set_value(2);
+    std::cout << "value " << e1.value() << std::endl;
+    /*
     auto e2 = eqn(x * (x + y));
+    std::cout << e2.value() << std::endl;
+    e2.print_aliases();
+    */
 }
