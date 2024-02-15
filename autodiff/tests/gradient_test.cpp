@@ -138,3 +138,40 @@ TEST(functions, pow) {
     ASSERT_NEAR(D[x], 108.0, 0.01);
     ASSERT_NEAR(D[y], 88.9876, 0.01);
 }
+
+TEST(changing_values, polynomial) {
+    var a(9);
+    var b(8);
+    auto x = a * a + b * b;
+    auto X = gradient(x);
+    ASSERT_EQ(X[a], 18);
+    ASSERT_EQ(X[b], 16);
+
+    set_value(&a, 1);
+    set_value(&b, 2);
+    X = gradient(x);
+    ASSERT_EQ(X[a], 2);
+    ASSERT_EQ(X[b], 4);
+
+    set_value(&a, 3);
+    set_value(&b, 3);
+    X = gradient(x);
+    ASSERT_EQ(X[a], 6);
+    ASSERT_EQ(X[b], 6);
+}
+
+TEST(changing_values, pow) {
+    var x(3);
+    var y(4);
+    auto pow_ = autodiff::functions::pow();
+    auto d = pow_(x, y);
+    auto D = gradient(d);
+    ASSERT_NEAR(D[x], 108.0, 0.01);
+    ASSERT_NEAR(D[y], 88.9876, 0.01);
+
+    set_value(&x, 9);
+    set_value(&y, 8);
+    D = gradient(d);
+    ASSERT_NEAR(D[x], 38263860, 0.01);
+    ASSERT_NEAR(D[y], 266.96, 0.01);
+}

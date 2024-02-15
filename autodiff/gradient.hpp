@@ -17,6 +17,7 @@ public:
     double operator[](var& x) { return gradients_[&x]; }
 
     void grad() {
+        head_->clean_grad();
         head_->set_gradient(1.0);
         head_->grad();
         // collect contributions

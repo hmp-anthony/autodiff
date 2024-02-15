@@ -105,4 +105,8 @@ TEST(basic, change_values) {
     set_value(&x, 1);
     set_value(&y, 2);
     ASSERT_EQ(z.eval(), 5);
+
+    set_value(&x, 5);
+    set_value(&y, 5);
+    ASSERT_EQ(z.eval(), 50);
 }

@@ -51,9 +51,11 @@ public:
 
     friend void set_value(var* v, double value) { 
         auto a = aliases[v];
-        v->set_value(value);
+        v->v_ = value;
+        v->set_gradient(0); 
         for(auto& e: a) {
-            e->set_value(value);
+            e->v_ = value;
+            e->set_gradient(0); 
         }
     }
 
@@ -133,6 +135,11 @@ public:
         v_ = x;
     }
 
+    void clean_grad() {
+        grad_ = 0;
+        if(left_) left_->clean_grad();
+        if(right_) right_->clean_grad();
+    }
 
     token& get_token() { return t_; }
 
