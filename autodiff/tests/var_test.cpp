@@ -95,7 +95,7 @@ TEST(basic, computation_graph_2) {
     ASSERT_EQ(stod(zrr->to_string()), 12.0);
 }
 
-TEST(basic, change_values) {
+TEST(change_values, polynomial) {
     var x(10);
     var y(12);
 
@@ -109,4 +109,9 @@ TEST(basic, change_values) {
     set_value(&x, 5);
     set_value(&y, 5);
     ASSERT_EQ(z.eval(), 50);
+}
+
+TEST(change_values, exp) {
+    auto exp_ = autodiff::functions::exp();
+
 }
