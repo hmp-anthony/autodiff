@@ -10,7 +10,7 @@
 
 using namespace autodiff;
 using namespace base;
-TEST(basic, addition) {
+TEST(functions, addition) {
     var a(1);
     var b(10);
 
@@ -99,12 +99,12 @@ TEST(change_values, polynomial) {
     auto z = x * x + y * y;
     ASSERT_EQ(z.value(), 244);
 
-    set_value(&x, 1);
-    set_value(&y, 2);
+    set_value(x, 1);
+    set_value(y, 2);
     ASSERT_EQ(z.value(), 5);
 
-    set_value(&x, 5);
-    set_value(&y, 5);
+    set_value(x, 5);
+    set_value(y, 5);
     ASSERT_EQ(z.value(), 50);
 }
 
@@ -115,7 +115,19 @@ TEST(change_values, exp) {
     auto f = exp_(x);
     ASSERT_NEAR(f.value(), 148.413, 0.01); 
     
-    set_value(&x, 8);
+    set_value(x, 8);
+    ASSERT_NEAR(f.value(), 2980.957, 0.01); 
+    
+}
+
+TEST(change_values, sin) {
+    auto exp_ = autodiff::functions::exp();
+    
+    var x(5);
+    auto f = exp_(x);
+    ASSERT_NEAR(f.value(), 148.413, 0.01); 
+    
+    set_value(x, 8);
     ASSERT_NEAR(f.value(), 2980.957, 0.01); 
     
 }

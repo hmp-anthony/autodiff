@@ -147,33 +147,26 @@ TEST(changing_values, polynomial) {
     ASSERT_EQ(X[a], 18);
     ASSERT_EQ(X[b], 16);
 
-    set_value(&a, 1);
-    set_value(&b, 2);
+    set_value(a, 1);
+    set_value(b, 2);
     X = gradient(x);
     ASSERT_EQ(X[a], 2);
     ASSERT_EQ(X[b], 4);
 
-    set_value(&a, 3);
-    set_value(&b, 3);
+    set_value(a, 3);
+    set_value(b, 3);
     X = gradient(x);
     ASSERT_EQ(X[a], 6);
     ASSERT_EQ(X[b], 6);
 }
 
-TEST(changing_values, pow) {
+TEST(changing_values, exp) {
     var x(3);
-    var y(4);
-    auto pow_ = autodiff::functions::pow();
-    auto d = pow_(x, y);
+    auto exp_ = autodiff::functions::exp();
+    auto d = exp_(x);
     auto D = gradient(d);
-    ASSERT_NEAR(D[x], 108.0, 0.01);
-    ASSERT_NEAR(D[y], 88.9876, 0.01);
-/*
-    set_value(&x, 9);
-    set_value(&y, 8);
+    ASSERT_NEAR(D[x], 20.08, 0.01);
+    set_value(x, 9);
     D = gradient(d);
-    std::cout << D[x] << " " << D[y] << std::endl;
-    ASSERT_NEAR(D[x], 38263860, 0.01);
-    ASSERT_NEAR(D[y], 266.96, 0.01);
-*/
+    ASSERT_NEAR(D[x], 8103.08, 0.01);
 }

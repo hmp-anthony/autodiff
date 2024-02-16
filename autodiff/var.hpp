@@ -49,10 +49,10 @@ public:
         }
     }
 
-    friend void set_value(var* v, double value) { 
-        auto a = aliases[v];
-        v->v_ = value;
-        v->set_gradient(0); 
+    friend void set_value(var& v, double value) { 
+        auto a = aliases[&v];
+        (&v)->v_ = value;
+        (&v)->set_gradient(0); 
         for(auto& e: a) {
             e->v_ = value;
             e->set_gradient(0); 
