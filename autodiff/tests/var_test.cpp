@@ -108,6 +108,38 @@ TEST(change_values, polynomial) {
     ASSERT_EQ(z.value(), 50);
 }
 
+TEST(change_values, division) {
+    var x(10);
+    var y(12);
+
+    auto z1 = x / y;
+    ASSERT_NEAR(z1.value(), 0.833, 0.01); 
+
+    auto z2 = y / x;
+    ASSERT_NEAR(z2.value(), 1.2, 0.01); 
+
+    set_value(x, 9);
+    set_value(y, 9);
+    auto z3 = x / y;
+    ASSERT_NEAR(z3.value(), 1.0, 0.01);
+}
+
+TEST(change_values, subtraction) {
+    var x(10);
+    var y(12);
+
+    auto z1 = x - y;
+    ASSERT_NEAR(z1.value(), -2, 0.01); 
+
+    auto z2 = y - x;
+    ASSERT_NEAR(z2.value(), 2, 0.01); 
+
+    set_value(x, 9);
+    set_value(y, 9);
+    auto z3 = x - y;
+    ASSERT_NEAR(z3.value(), 0, 0.01);
+}
+
 TEST(change_values, exp) {
     auto exp_ = autodiff::functions::exp();
     

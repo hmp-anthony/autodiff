@@ -139,7 +139,7 @@ TEST(functions, pow) {
     ASSERT_NEAR(D[y], 88.9876, 0.01);
 }
 
-TEST(changing_values, polynomial) {
+TEST(changing_values, addition_multiplication) {
     var a(9);
     var b(8);
     auto x = a * a + b * b;
@@ -160,6 +160,72 @@ TEST(changing_values, polynomial) {
     ASSERT_EQ(X[b], 6);
 }
 
+TEST(changing_values, division) {
+    var a(9);
+    var b(8);
+    auto x = a / b;
+    auto X = gradient(x);
+    ASSERT_EQ(X[a], 0.125);
+    ASSERT_EQ(X[b], -0.140625);
+
+    set_value(a, 1);
+    set_value(b, 2);
+    X = gradient(x);
+    ASSERT_EQ(X[a], 0.5);
+    ASSERT_EQ(X[b], -0.25);
+
+    set_value(a, 3);
+    set_value(b, 3);
+    X = gradient(x);
+    ASSERT_NEAR(X[a], 0.3333, 0.01);
+    ASSERT_NEAR(X[b], -0.333, 0.01);
+}
+
+TEST(changing_values, subtraction) {
+    {
+        var a(9);
+        var b(8);
+        auto x = a * a - b * b;
+        auto X = gradient(x);
+        ASSERT_EQ(x.value(), 17);
+        ASSERT_EQ(X[a], 18);
+        ASSERT_EQ(X[b], -16);
+
+        set_value(a, 1);
+        set_value(b, 2);
+        X = gradient(x);
+        ASSERT_EQ(X[a], 2);
+        ASSERT_EQ(X[b], -4);
+
+        set_value(a, 3);
+        set_value(b, 3);
+        X = gradient(x);
+        ASSERT_NEAR(X[a], 6, 0.01);
+        ASSERT_NEAR(X[b], -6, 0.01);
+    }
+    {
+        var a(9);
+        var b(8);
+        auto x = a - b;
+        auto X = gradient(x);
+        ASSERT_EQ(x.value(), 1);
+        ASSERT_EQ(X[a], 1);
+        ASSERT_EQ(X[b], -1);
+
+        set_value(a, 1);
+        set_value(b, 2);
+        X = gradient(x);
+        ASSERT_EQ(X[a], 1);
+        ASSERT_EQ(X[b], -1);
+
+        set_value(a, 3);
+        set_value(b, 3);
+        X = gradient(x);
+        ASSERT_NEAR(X[a], 1, 0.01);
+        ASSERT_NEAR(X[b], -1, 0.01);
+    }
+}
+
 TEST(changing_values, exp) {
     var x(3);
     auto exp_ = autodiff::functions::exp();
@@ -169,4 +235,27 @@ TEST(changing_values, exp) {
     set_value(x, 9);
     D = gradient(d);
     ASSERT_NEAR(D[x], 8103.08, 0.01);
+
+    var y(2);
+    auto f = exp_(x + y * y);
+    auto F = gradient(f);
+    ASSERT_NEAR(f.value(), 442413.392, 0.01);
+    ASSERT_NEAR(F[x], 442413.392, 0.01);
+    ASSERT_NEAR(F[y], 1769653.568, 0.01);
+}
+
+TEST(changing_values, sin) {
+    var x(2);
+    auto sin_ = autodiff::functions::sin();
+    auto d = sin_(x);
+    ASSERT_NEAR(d.value(), 0.909, 0.01);
+    auto D = gradient(d);
+    ASSERT_NEAR(D[x], -0.416, 0.01);
+
+    var y(10.8);
+    d = sin_(x + y);
+    D = gradient(d);
+    ASSERT_NEAR(d.value(), 0.231, 0.01);
+    ASSERT_NEAR(D[x], 0.972, 0.01);
+    ASSERT_NEAR(D[y], 0.972, 0.01);
 }

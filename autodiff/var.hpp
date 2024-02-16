@@ -137,10 +137,20 @@ public:
             return left_->value() + right_->value();
         } else if(t_.to_string() == "*") {
             return left_->value() * right_->value();
+        } else if(t_.to_string() == "-") {
+            return left_->value() - right_->value();
+        } else if(t_.to_string() == "/") {
+            return left_->value() / right_->value();
         } else if(t_.to_string() == "exp") {
             return std::exp(left_->value());
         } else if(t_.to_string() == "sin") {
             return std::sin(left_->value());
+        } else if(t_.to_string() == "cos") {
+            return std::cos(left_->value());
+        } else if(t_.to_string() == "ln") {
+            return std::log(left_->value());
+        } else if(t_.to_string() == "log") {
+            return std::log(left_->value()) / std::log(2);
         } else {
             return v_.value();
         }
@@ -205,8 +215,8 @@ public:
     }
 
     void subtraction() {
-        (left())->grad_ -= grad_;
-        (right())->grad_ += grad_;
+        (left())->grad_ += grad_;
+        (right())->grad_ -= grad_;
     }
 
     void exp() { left_->grad_ += grad_ * std::exp(left_->value()); }
