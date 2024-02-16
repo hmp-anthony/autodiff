@@ -30,7 +30,7 @@ public:
         v_ = v;
     }
     explicit var(token t)
-        : t_(std::move(t)), grad_(0){};
+        : t_(std::move(t)), grad_(0) {};
     explicit var(var&& n)
         : t_(std::move(n.t_)),
           grad_(0),
@@ -124,17 +124,6 @@ public:
     std::shared_ptr<var>& left() { return left_; }
     std::shared_ptr<var>& right() { return right_; }
 
-    double value() const { 
-        if(v_) {return v_.value();}
-        return 0;
-    }
-
-    void reset_value() { v_.reset(); }
-
-    void set_value(double x) {
-        v_ = x;
-    }
-
     void clean_grad() {
         grad_ = 0;
         if(left_) left_->clean_grad();
@@ -143,11 +132,13 @@ public:
 
     token& get_token() { return t_; }
 
-    double eval() { 
+    double value() { 
         if(t_.to_string() == "+") {
-            return left_->eval() + right_->eval();
+            return left_->value() + right_->value();
         } else if(t_.to_string() == "*") {
-            return left_->eval() * right_->eval();
+            return left_->value() * right_->value();
+        } else if(t_.to_string() == "exp") {
+            return std::exp(left_->value());
         } else {
             return v_.value();
         }
@@ -200,13 +191,13 @@ public:
     }
 
     void multiplication() {
-        left_->grad_ += grad_ * right_->eval();
-        right_->grad_ += grad_ * left_->eval();
+        left_->grad_ += grad_ * right_->value();
+        right_->grad_ += grad_ * left_->value();
     }
 
     void division() {
-        double r = right()->eval();
-        double l = left()->eval();
+        double r = right()->value();
+        double l = left()->value();
         (left())->grad_ += grad_ * (1.0 / r);
         (right())->grad_ -= grad_ * (l / (r * r));
     }
@@ -216,15 +207,15 @@ public:
         (right())->grad_ += grad_;
     }
 
-    void exp() { left_->grad_ += grad_ * std::exp(left_->eval()); }
+    void exp() { left_->grad_ += grad_ * std::exp(left_->value()); }
 
-    void sin() { left_->grad_ += std::cos(left_->eval()); }
+    void sin() { left_->grad_ += std::cos(left_->value()); }
 
-    void cos() { left_->grad_ -= std::sin(left_->eval()); }
+    void cos() { left_->grad_ -= std::sin(left_->value()); }
 
-    void ln() { left_->grad_ += grad_ * (1 / left_->eval()); }
+    void ln() { left_->grad_ += grad_ * (1 / left_->value()); }
 
-    void log() { left_->grad_ += grad_ * (1 / (left_->eval() * std::log(2))); }
+    void log() { left_->grad_ += grad_ * (1 / (left_->value() * std::log(2))); }
 
     void neg() { left_->grad_ += (-1) * grad_; }
 

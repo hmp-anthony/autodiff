@@ -26,30 +26,27 @@ TEST(basic, addition) {
 TEST(functions, exp) {
     // testing functions
     auto exp_ = autodiff::functions::exp();
+    {
+        var y_1(10);
+        var y_2(1);
+        var y_3 = y_1 + y_2;
 
-    var y_1(10);
-    var y_2(1);
-    var y_3 = y_1 + y_2;
+        auto z_1 = exp_(y_1 + y_2);
 
-    auto z_1 = exp_(y_1 + y_2);
+        auto z_2 = exp_(y_3);
+        ASSERT_NEAR(z_1.value(), 59874.1, 0.1);
+        ASSERT_NEAR(z_2.value(), 59874.1, 0.1);
+    }
+    {
+        var y_1(10);
+        var y_2(1);
+        var y_3(10);
+        var y_4(2);
 
-    auto z_2 = exp_(y_3);
-    ASSERT_NEAR(z_1.value(), 59874.1, 0.1);
-    ASSERT_NEAR(z_2.value(), 59874.1, 0.1);
-}
-
-TEST(functions, exp_2) {
-    // testing functions
-    auto exp_ = autodiff::functions::exp();
-
-    var y_1(10);
-    var y_2(1);
-    var y_3(10);
-    var y_4(2);
-
-    auto z_1 = exp_(y_1 + y_2) + y_3 * y_4;
-    ASSERT_NEAR(z_1.value(), 59894.1, 0.1);
-    ASSERT_EQ(z_1.to_string(), "+");
+        auto z_1 = exp_(y_1 + y_2) + y_3 * y_4;
+        ASSERT_NEAR(z_1.value(), 59894.1, 0.1);
+        ASSERT_EQ(z_1.to_string(), "+");
+    }
 }
 
 TEST(basic, computation_graph_1) {
@@ -100,18 +97,25 @@ TEST(change_values, polynomial) {
     var y(12);
 
     auto z = x * x + y * y;
-    ASSERT_EQ(z.eval(), 244);
+    ASSERT_EQ(z.value(), 244);
 
     set_value(&x, 1);
     set_value(&y, 2);
-    ASSERT_EQ(z.eval(), 5);
+    ASSERT_EQ(z.value(), 5);
 
     set_value(&x, 5);
     set_value(&y, 5);
-    ASSERT_EQ(z.eval(), 50);
+    ASSERT_EQ(z.value(), 50);
 }
 
 TEST(change_values, exp) {
     auto exp_ = autodiff::functions::exp();
-
+    
+    var x(5);
+    auto f = exp_(x);
+    ASSERT_NEAR(f.value(), 148.413, 0.01); 
+    
+    set_value(&x, 8);
+    ASSERT_NEAR(f.value(), 2980.957, 0.01); 
+    
 }
