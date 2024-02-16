@@ -121,13 +121,16 @@ TEST(change_values, exp) {
 }
 
 TEST(change_values, sin) {
-    auto exp_ = autodiff::functions::exp();
+    auto sin_ = autodiff::functions::sin();
     
     var x(5);
-    auto f = exp_(x);
-    ASSERT_NEAR(f.value(), 148.413, 0.01); 
+    auto f = sin_(x);
+    ASSERT_NEAR(f.value(), -0.958, 0.01); 
     
     set_value(x, 8);
-    ASSERT_NEAR(f.value(), 2980.957, 0.01); 
+    ASSERT_NEAR(f.value(), 0.989, 0.01); 
     
+    var y(4);
+    auto g = sin_(x + y);
+    ASSERT_NEAR(g.value(), -0.536, 0.01);
 }

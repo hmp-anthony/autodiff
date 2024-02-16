@@ -139,6 +139,8 @@ public:
             return left_->value() * right_->value();
         } else if(t_.to_string() == "exp") {
             return std::exp(left_->value());
+        } else if(t_.to_string() == "sin") {
+            return std::sin(left_->value());
         } else {
             return v_.value();
         }
