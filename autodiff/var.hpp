@@ -23,7 +23,19 @@ public:
           grad_(0),
           left_(std::move(v.left_)),
           right_(std::move(v.right_)),
-          v_(v.v_) {}
+          v_(v.v_) {
+              std::cout << "this " << this << std::endl;
+              std::cout << "&v   " << &v << std::endl;
+              std::cout << "aliases \t" << std::endl;
+              for(auto& e : aliases) {
+                  std::cout << '\t' << e.first << std::endl;
+                  for(auto& v : e.second) {
+                      std::cout << "\t\t" << v << std::endl;
+                  }
+              }
+//              auto ptr = std::make_shared<var>(*this);
+//              aliases[&v].push_back(ptr);
+          }
     explicit var(std::string s, double v)
         : t_(s), grad_(0), v_(v) {}
     explicit var(double v) : t_(v), grad_(0) {
