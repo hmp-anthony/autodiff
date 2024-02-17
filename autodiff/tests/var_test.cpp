@@ -166,3 +166,18 @@ TEST(change_values, sin) {
     auto g = sin_(x + y);
     ASSERT_NEAR(g.value(), -0.536, 0.01);
 }
+
+TEST(constants, addition) {
+    var x(5);
+    auto y = x + 1.0;
+    ASSERT_EQ(y.value(), 6);
+
+    set_value(x, 9);
+    ASSERT_EQ(y.value(), 10);
+
+    auto z = 1.0 + x;
+    ASSERT_EQ(z.value(), 10);
+
+    set_value(x, 11);
+    ASSERT_EQ(z.value(), 12);
+}

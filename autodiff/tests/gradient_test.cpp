@@ -278,9 +278,97 @@ void test(std::array<var, 2>& v, var& eqn) {
     ASSERT_NEAR(G[v[0]], 6, 0.01);
     ASSERT_NEAR(G[v[1]], 1, 0.01);
 }
+
 TEST(array_of_var, 2D) {
     std::array<var, 2> v = {var(2.2), var(3.56)};
     auto eqn = v[0] * v[0] + v[1] * v[0];
     test(v, eqn);
 }
 
+TEST(constants, addition_right) {
+    var x(10);
+    auto v = x * x + 1;
+    auto V = gradient(v);
+    ASSERT_EQ(v.value(), 101);
+    ASSERT_EQ(V[x], 20);
+
+    auto w = (x + 1) * x;
+    auto W = gradient(w);
+    ASSERT_EQ(w.value(), 110);
+    ASSERT_EQ(W[x], 21);
+
+    set_value(x, 11);
+    ASSERT_EQ(v.value(), 122);
+    ASSERT_EQ(w.value(), 132);
+
+    V = gradient(v);
+    W = gradient(w);
+    ASSERT_EQ(V[x], 22);
+    ASSERT_EQ(W[x], 23);
+}
+
+TEST(constants, addition_left) {
+    var x(10);
+    auto v = 1 + x * x;
+    auto V = gradient(v);
+    ASSERT_EQ(v.value(), 101);
+    ASSERT_EQ(V[x], 20);
+
+    auto w = (1 + x) * x;
+    auto W = gradient(w);
+    ASSERT_EQ(w.value(), 110);
+    ASSERT_EQ(W[x], 21);
+
+    set_value(x, 11);
+    ASSERT_EQ(v.value(), 122);
+    ASSERT_EQ(w.value(), 132);
+
+    V = gradient(v);
+    W = gradient(w);
+    ASSERT_EQ(V[x], 22);
+    ASSERT_EQ(W[x], 23);
+}
+
+TEST(constants, subtraction_right) {
+    var x(10);
+    auto v = x * x - 1;
+    auto V = gradient(v);
+    ASSERT_EQ(v.value(), 99);
+    ASSERT_EQ(V[x], 20);
+
+    auto w = (x - 1) * x;
+    auto W = gradient(w);
+    ASSERT_EQ(w.value(), 90);
+    ASSERT_EQ(W[x], 19);
+
+    set_value(x, 11);
+    ASSERT_EQ(v.value(), 120);
+    ASSERT_EQ(w.value(), 110);
+
+    V = gradient(v);
+    W = gradient(w);
+    ASSERT_EQ(V[x], 22);
+    ASSERT_EQ(W[x], 21);
+}
+
+TEST(constants, subtraction_left) {
+    var x(10);
+    auto v = 1 - x * x;
+    auto V = gradient(v);
+    ASSERT_EQ(v.value(), -99);
+    ASSERT_EQ(V[x], 20);
+
+    auto w = (1 - x) * x;
+    auto W = gradient(w);
+    ASSERT_EQ(w.value(), 110);
+    ASSERT_EQ(W[x], 21);
+
+    set_value(x, 11);
+    ASSERT_EQ(v.value(), 122);
+    ASSERT_EQ(w.value(), 132);
+
+    V = gradient(v);
+    W = gradient(w);
+    ASSERT_EQ(V[x], 22);
+    ASSERT_EQ(W[x], 23);
+}
