@@ -10,7 +10,6 @@
 using namespace autodiff;
 using namespace base;
 
-/*
 TEST(no_brackets, simple_binary_ops) {
     var a(10);
     auto x = -a;
@@ -268,21 +267,20 @@ TEST(changing_values, sin) {
     ASSERT_NEAR(D[y], 0.843, 0.01);
 }
 
-*/
 void test(std::array<var, 2>& v, var& eqn) {
-    std::cout << "begin test" << std::endl;
     auto G = gradient(eqn);
-    std::cout << G[v[0]] << std::endl;
-    std::cout << G[v[1]] << std::endl;
+    ASSERT_NEAR(G[v[0]], 7.96, 0.01);
+    ASSERT_NEAR(G[v[1]], 2.2, 0.01);
+
+    set_value(v[0], 1);
+    set_value(v[1], 4);
+    G = gradient(eqn);
+    ASSERT_NEAR(G[v[0]], 6, 0.01);
+    ASSERT_NEAR(G[v[1]], 1, 0.01);
 }
 TEST(array_of_var, 2D) {
-    var x(3.4); 
-    var y(2.2);
-    auto eqn = x * y + x * x;
-    std::cout << "calling const ===============" << std::endl;
-    std::array<var, 2> vars = {x, y};
-    std::cout << "calling const ===============" << std::endl;
-    std::cout << vars[0].value() << std::endl;
-    test(vars, eqn);
+    std::array<var, 2> v = {var(2.2), var(3.56)};
+    auto eqn = v[0] * v[0] + v[1] * v[0];
+    test(v, eqn);
 }
 

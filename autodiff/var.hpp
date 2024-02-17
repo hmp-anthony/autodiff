@@ -16,26 +16,14 @@
 
 namespace autodiff {
 namespace base {
-class var {
+class var : public std::enable_shared_from_this<var> {
 public:
     var(const var& v)
         : t_(v.t_),
           grad_(0),
           left_(std::move(v.left_)),
           right_(std::move(v.right_)),
-          v_(v.v_) {
-              std::cout << "this " << this << std::endl;
-              std::cout << "&v   " << &v << std::endl;
-              std::cout << "aliases \t" << std::endl;
-              for(auto& e : aliases) {
-                  std::cout << '\t' << e.first << std::endl;
-                  for(auto& v : e.second) {
-                      std::cout << "\t\t" << v << std::endl;
-                  }
-              }
-//              auto ptr = std::make_shared<var>(*this);
-//              aliases[&v].push_back(ptr);
-          }
+          v_(v.v_) {}
     explicit var(std::string s, double v)
         : t_(s), grad_(0), v_(v) {}
     explicit var(double v) : t_(v), grad_(0) {
@@ -51,6 +39,11 @@ public:
           v_(n.v_) {}
 
     static std::map<const var*,std::vector<std::shared_ptr<var>>> aliases;
+    
+    std::shared_ptr<var> getptr() {
+        return shared_from_this();
+    }
+
 
     friend void update_aliases(const var& l, const var& r, var& result) {
         if(!(result.left_->is_binary_operation())) {
