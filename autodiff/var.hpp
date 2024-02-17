@@ -16,7 +16,7 @@
 
 namespace autodiff {
 namespace base {
-class var : public std::enable_shared_from_this<var> {
+class var {
 public:
     var(const var& v)
         : t_(v.t_),
@@ -40,11 +40,6 @@ public:
 
     static std::map<const var*,std::vector<std::shared_ptr<var>>> aliases;
     
-    std::shared_ptr<var> getptr() {
-        return shared_from_this();
-    }
-
-
     friend void update_aliases(const var& l, const var& r, var& result) {
         if(!(result.left_->is_binary_operation())) {
             aliases[&l].push_back(result.left_);
