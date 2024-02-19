@@ -99,26 +99,27 @@ public:
     }
 
     friend var operator-(const var& l, const double c) {
-        return subtract_operator(l, c, false);
-    }
-    
-    friend var operator-(const double c, const var& r) {
-        return subtract_operator(r, c, true);
-    }
-
-    friend var subtract_operator(const var& l, const double c, bool r) {
         var result(token(std::string("-")));
         var right(token(c, true));
         right.v_ = c;
-        if(r) { 
-            result.v_ = -1 * c - l.v_.value();
-        } else {
-            result.v_ = -1 * c - l.v_.value();
-        }
+        result.v_ = c + l.v_.value();
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(right);
         if(!(result.left_->is_binary_operation())) {
             aliases[&l].push_back(result.left_);
+        }
+        return result;
+    }
+    
+    friend var operator-(const double c, const var& r) {
+        var result(token(std::string("-")));
+        var left(token(c, true));
+        left.v_ = c;
+        result.v_ = c + r.v_.value();
+        result.left_ = std::make_shared<var>(left);
+        result.right_ = std::make_shared<var>(r);
+        if(!(result.right_->is_binary_operation())) {
+            aliases[&r].push_back(result.right_);
         }
         return result;
     }
@@ -129,6 +130,27 @@ public:
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(r);
         update_aliases(l, r, result);
+        return result;
+    }
+
+    friend var operator*(const var& l, const double c) {
+        return mult_operator(l, c);
+    }
+
+    friend var operator*(const double c, const var& r) {
+        return mult_operator(r, c);
+    }
+
+    friend var mult_operator(const var& l, const double c) {
+        var result(token(std::string("*")));
+        var right(token(c, true));
+        right.v_ = c;
+        result.v_ = c * l.v_.value();
+        result.left_ = std::make_shared<var>(l);
+        result.right_ = std::make_shared<var>(right);
+        if(!(result.left_->is_binary_operation())) {
+            aliases[&l].push_back(result.left_);
+        }
         return result;
     }
 

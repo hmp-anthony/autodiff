@@ -353,22 +353,74 @@ TEST(constants, subtraction_right) {
 
 TEST(constants, subtraction_left) {
     var x(10);
+
+    auto u = 1 - x;
+    auto U = gradient(u);
+    ASSERT_EQ(u.value(), -9);
+    ASSERT_EQ(U[x], -1);
+
     auto v = 1 - x * x;
     auto V = gradient(v);
     ASSERT_EQ(v.value(), -99);
-    ASSERT_EQ(V[x], 20);
+    ASSERT_EQ(V[x], -20);
 
     auto w = (1 - x) * x;
     auto W = gradient(w);
-    ASSERT_EQ(w.value(), 110);
-    ASSERT_EQ(W[x], 21);
+    ASSERT_EQ(w.value(), -90);
+    ASSERT_EQ(W[x], -19);
 
     set_value(x, 11);
-    ASSERT_EQ(v.value(), 122);
-    ASSERT_EQ(w.value(), 132);
+    ASSERT_EQ(v.value(), -120);
+    ASSERT_EQ(w.value(), -110);
 
     V = gradient(v);
     W = gradient(w);
-    ASSERT_EQ(V[x], 22);
-    ASSERT_EQ(W[x], 23);
+    ASSERT_EQ(V[x], -22);
+    ASSERT_EQ(W[x], -21);
+}
+
+TEST(constants, multiplication_right) {
+    var x(10);
+
+    auto u = x * 2;
+    auto U = gradient(u);
+    ASSERT_EQ(u.value(), 20);
+    ASSERT_EQ(U[x], 2);
+
+    auto v = x * x * 2;
+    auto V = gradient(v);
+    ASSERT_EQ(v.value(), 200);
+    ASSERT_EQ(V[x], 40);
+
+    set_value(x, 11);
+    ASSERT_EQ(u.value(), 22);
+    ASSERT_EQ(v.value(), 242);
+
+    U = gradient(u);
+    V = gradient(v);
+    ASSERT_EQ(U[x], 2);
+    ASSERT_EQ(V[x], 44);
+}
+
+TEST(constants, multiplication_left) {
+    var x(10);
+
+    auto u = 2 * x;
+    auto U = gradient(u);
+    ASSERT_EQ(u.value(), 20);
+    ASSERT_EQ(U[x], 2);
+
+    auto v = x * 2 * x;
+    auto V = gradient(v);
+    ASSERT_EQ(v.value(), 200);
+    ASSERT_EQ(V[x], 40);
+
+    set_value(x, 11);
+    ASSERT_EQ(u.value(), 22);
+    ASSERT_EQ(v.value(), 242);
+
+    U = gradient(u);
+    V = gradient(v);
+    ASSERT_EQ(U[x], 2);
+    ASSERT_EQ(V[x], 44);
 }
