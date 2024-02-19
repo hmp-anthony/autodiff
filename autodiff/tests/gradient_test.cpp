@@ -424,3 +424,17 @@ TEST(constants, multiplication_left) {
     ASSERT_EQ(U[x], 2);
     ASSERT_EQ(V[x], 44);
 }
+
+TEST(compound_functions, sin_polynomial) {
+    var x(3);
+    var y(2);
+    
+    auto sin_ = autodiff::functions::sin();
+
+    auto z = sin_(x * x + y * y);
+    auto Z = gradient(z);
+    
+    ASSERT_NEAR(z.value(), 0.420, 0.01);
+    ASSERT_NEAR(Z[x], 5.444, 0.01);
+}
+
