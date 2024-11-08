@@ -102,7 +102,7 @@ public:
         var result(token(std::string("-")));
         var right(token(c, true));
         right.v_ = c;
-        result.v_ = c + l.v_.value();
+        result.v_ = l.v_.value() - c;
         result.left_ = std::make_shared<var>(l);
         result.right_ = std::make_shared<var>(right);
         if(!(result.left_->is_binary_operation())) {
@@ -115,7 +115,7 @@ public:
         var result(token(std::string("-")));
         var left(token(c, true));
         left.v_ = c;
-        result.v_ = c + r.v_.value();
+        result.v_ = c - r.v_.value();
         result.left_ = std::make_shared<var>(left);
         result.right_ = std::make_shared<var>(r);
         if(!(result.right_->is_binary_operation())) {

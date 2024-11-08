@@ -349,6 +349,9 @@ TEST(constants, subtraction_right) {
     ASSERT_EQ(W[x], 19);
 
     set_value(x, 11);
+    v.forward_pass();
+    w.forward_pass();
+
     ASSERT_EQ(v.value(), 120);
     ASSERT_EQ(w.value(), 110);
 
@@ -377,6 +380,9 @@ TEST(constants, subtraction_left) {
     ASSERT_EQ(W[x], -19);
 
     set_value(x, 11);
+
+    v.forward_pass();
+    w.forward_pass();
     ASSERT_EQ(v.value(), -120);
     ASSERT_EQ(w.value(), -110);
 
@@ -400,6 +406,9 @@ TEST(constants, multiplication_right) {
     ASSERT_EQ(V[x], 40);
 
     set_value(x, 11);
+
+    u.forward_pass();
+    v.forward_pass();
     ASSERT_EQ(u.value(), 22);
     ASSERT_EQ(v.value(), 242);
 
@@ -423,6 +432,9 @@ TEST(constants, multiplication_left) {
     ASSERT_EQ(V[x], 40);
 
     set_value(x, 11);
+
+    u.forward_pass();
+    v.forward_pass();
     ASSERT_EQ(u.value(), 22);
     ASSERT_EQ(v.value(), 242);
 

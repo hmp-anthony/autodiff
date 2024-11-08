@@ -152,6 +152,8 @@ TEST(change_values, exp) {
     ASSERT_NEAR(f.value(), 148.413, 0.01); 
     
     set_value(x, 8);
+    f.forward_pass();
+
     ASSERT_NEAR(f.value(), 2980.957, 0.01); 
     
 }
@@ -164,6 +166,7 @@ TEST(change_values, sin) {
     ASSERT_NEAR(f.value(), -0.958, 0.01); 
     
     set_value(x, 8);
+    f.forward_pass();
     ASSERT_NEAR(f.value(), 0.989, 0.01); 
     
     var y(4);
@@ -177,11 +180,14 @@ TEST(constants, addition) {
     ASSERT_EQ(y.value(), 6);
 
     set_value(x, 9);
+
+    y.forward_pass();
     ASSERT_EQ(y.value(), 10);
 
     auto z = 1.0 + x;
     ASSERT_EQ(z.value(), 10);
 
     set_value(x, 11);
+    z.forward_pass();
     ASSERT_EQ(z.value(), 12);
 }
