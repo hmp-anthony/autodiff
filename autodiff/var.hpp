@@ -200,28 +200,31 @@ public:
 
     token& get_token() { return t_; }
 
-    double value() { 
+    double forward_pass() { 
         if(t_.to_string() == "+") {
-            return left_->value() + right_->value();
+            v_ = left_->forward_pass() + right_->forward_pass();
         } else if(t_.to_string() == "*") {
-            return left_->value() * right_->value();
+            v_ = left_->forward_pass() * right_->forward_pass();
         } else if(t_.to_string() == "-") {
-            return left_->value() - right_->value();
+            v_ = left_->forward_pass() - right_->forward_pass();
         } else if(t_.to_string() == "/") {
-            return left_->value() / right_->value();
+            v_ = left_->forward_pass() / right_->forward_pass();
         } else if(t_.to_string() == "exp") {
-            return std::exp(left_->value());
+            v_ = std::exp(left_->forward_pass());
         } else if(t_.to_string() == "sin") {
-            return std::sin(left_->value());
+            v_ = std::sin(left_->forward_pass());
         } else if(t_.to_string() == "cos") {
-            return std::cos(left_->value());
+            v_= std::cos(left_->forward_pass());
         } else if(t_.to_string() == "ln") {
-            return std::log(left_->value());
+            v_ = std::log(left_->forward_pass());
         } else if(t_.to_string() == "log") {
-            return std::log(left_->value()) / std::log(2);
-        } else {
-            return v_.value();
+            v_ = std::log(left_->forward_pass()) / std::log(2);
         }
+	return value();
+    }
+
+    double value() { 
+	return v_.value();
     }
 
     double get_gradient() { return grad_; }

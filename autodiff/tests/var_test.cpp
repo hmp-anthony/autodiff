@@ -101,10 +101,14 @@ TEST(change_values, polynomial) {
 
     set_value(x, 1);
     set_value(y, 2);
+    z.forward_pass();
+
     ASSERT_EQ(z.value(), 5);
 
     set_value(x, 5);
     set_value(y, 5);
+    z.forward_pass();
+
     ASSERT_EQ(z.value(), 50);
 }
 

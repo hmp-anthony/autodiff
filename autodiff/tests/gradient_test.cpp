@@ -261,6 +261,8 @@ TEST(changing_values, sin) {
 
     set_value(x, 9);
     set_value(y, 3);
+    d.forward_pass();
+
     D = gradient(d);
     ASSERT_NEAR(d.value(), -0.536, 0.01);
     ASSERT_NEAR(D[x], 0.843, 0.01);
@@ -298,6 +300,9 @@ TEST(constants, addition_right) {
     ASSERT_EQ(W[x], 21);
 
     set_value(x, 11);
+    v.forward_pass();
+    w.forward_pass();
+
     ASSERT_EQ(v.value(), 122);
     ASSERT_EQ(w.value(), 132);
 
@@ -320,6 +325,8 @@ TEST(constants, addition_left) {
     ASSERT_EQ(W[x], 21);
 
     set_value(x, 11);
+    v.forward_pass();
+    w.forward_pass();
     ASSERT_EQ(v.value(), 122);
     ASSERT_EQ(w.value(), 132);
 
